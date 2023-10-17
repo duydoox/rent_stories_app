@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { memo, useEffect } from 'react';
-import { useTheme } from '@/Hooks';
+import { useTheme } from '../../hooks';
 import Animated, {
   Easing,
   useAnimatedStyle,

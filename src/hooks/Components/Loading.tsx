@@ -1,7 +1,7 @@
 import React from 'react';
-import { useTheme } from '@/Hooks';
 import { View } from 'react-native';
-import CircleLoading from '@/Components/CircleLoading';
+import { CircleLoading } from '@/components';
+import useTheme from '../useTheme';
 
 const Loading = () => {
   const { Layout, Colors } = useTheme();
