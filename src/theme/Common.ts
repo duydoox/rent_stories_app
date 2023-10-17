@@ -24,6 +24,17 @@ export default function <C>({ Colors, ...args }: CommonParams<C>) {
         borderRadius: 10,
         paddingStart: 20,
       },
+      shadow: {
+        shadowColor: '#000',
+        backgroundColor: '#fff',
+        shadowOffset: {
+          width: 0,
+          height: args.MetricsSizes.tiny * 0.7,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 3,
+      },
     }),
   };
 }

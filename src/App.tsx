@@ -5,6 +5,11 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import { store, persistor } from './store';
 import ApplicationNavigator from './navigators/Application';
 import './translations';
+import {
+  DatePickerProvider,
+  ImageViewerProvider,
+  LoadingGlobalProvider,
+} from './hooks';
 
 const App = () => (
   <Provider store={store}>
@@ -16,7 +21,13 @@ const App = () => (
      * @see https://github.com/rt2zz/redux-persist/blob/master/docs/PersistGate.md
      */}
     <PersistGate loading={null} persistor={persistor}>
-      <ApplicationNavigator />
+      <LoadingGlobalProvider>
+        <DatePickerProvider>
+          <ImageViewerProvider>
+            <ApplicationNavigator />
+          </ImageViewerProvider>
+        </DatePickerProvider>
+      </LoadingGlobalProvider>
     </PersistGate>
   </Provider>
 );
