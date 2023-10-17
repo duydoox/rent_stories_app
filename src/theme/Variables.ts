@@ -45,7 +45,7 @@ export const FontSize = {
 /**
  * Metrics Sizes
  */
-const tiny = 10;
+const tiny = 5;
 const small = tiny * 2; // 20
 const regular = tiny * 3; // 30
 const large = regular * 2; // 60

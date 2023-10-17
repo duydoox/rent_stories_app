@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StatusBar } from 'react-native';
+import { SafeAreaView, StatusBar, View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
   NavigationContainer,
@@ -23,7 +23,7 @@ const ApplicationNavigator = () => {
   useFlipper(navigationRef);
 
   return (
-    <SafeAreaView style={[Layout.fill, { backgroundColor: colors.card }]}>
+    <View style={[Layout.fill, { backgroundColor: colors.card }]}>
       <NavigationContainer theme={NavigationTheme} ref={navigationRef}>
         <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -31,7 +31,7 @@ const ApplicationNavigator = () => {
           <Stack.Screen name="Main" component={MainNavigator} />
         </Stack.Navigator>
       </NavigationContainer>
-    </SafeAreaView>
+    </View>
   );
 };
 
