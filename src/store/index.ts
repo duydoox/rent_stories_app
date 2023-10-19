@@ -15,9 +15,12 @@ import { MMKV } from 'react-native-mmkv';
 
 import { api } from '../services/api';
 import theme from './theme';
+import setting from './setting';
+import { TypedUseSelectorHook, useSelector } from 'react-redux';
 
 const reducers = combineReducers({
   theme,
+  setting,
   [api.reducerPath]: api.reducer,
 });
 
@@ -40,7 +43,7 @@ export const reduxStorage: Storage = {
 const persistConfig = {
   key: 'root',
   storage: reduxStorage,
-  whitelist: ['theme', 'auth'],
+  whitelist: ['theme', 'setting'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
@@ -68,3 +71,7 @@ const persistor = persistStore(store);
 setupListeners(store.dispatch);
 
 export { store, persistor };
+
+export type RootState = ReturnType<typeof store.getState>;
+
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

@@ -3,6 +3,10 @@ import { StackScreenProps } from '@react-navigation/stack';
 
 export type MainParamsList = {
   Home: undefined;
+  Book: undefined;
+  RentBook: undefined;
+  ReturnBook: undefined;
+  Statistic: undefined;
 };
 
 export type ApplicationStackParamList = {

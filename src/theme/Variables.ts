@@ -14,13 +14,17 @@ export const Colors = {
   transparent: 'rgba(0,0,0,0)',
   inputBackground: '#FFFFFF',
   white: '#ffffff',
+  background: '#ffffff',
   //Typography
   textGray800: '#000000',
   black_30: 'rgba(0, 0, 0, 0.3)',
   white_40: 'rgba(255, 255, 255, 0.4)',
   textGray400: '#4D4D4D',
   textGray200: '#A1A1A1',
-  primary: '#E14032',
+  primary: '#00CC99',
+  blue: '#0066CC',
+  red: '#FF5555',
+  orange: '#EEA500',
   success: '#28a745',
   error: '#dc3545',
   //ComponentColors

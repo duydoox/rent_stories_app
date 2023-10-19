@@ -25,6 +25,9 @@ export default function ({ FontSize, Colors }: ThemeVariables) {
     textBold: {
       fontWeight: 'bold',
     },
+    textBold500: {
+      fontWeight: '500',
+    },
     textUppercase: {
       textTransform: 'uppercase',
     },
@@ -66,6 +69,18 @@ export default function ({ FontSize, Colors }: ThemeVariables) {
     },
     textLight: {
       color: Colors.textGray200,
+    },
+    textNight: {
+      color: Colors.textGray800,
+    },
+    textRed: {
+      color: Colors.red,
+    },
+    textBlue: {
+      color: Colors.blue,
+    },
+    textOrange: {
+      color: Colors.orange,
     },
     textLobster: {
       fontFamily: 'lobster',

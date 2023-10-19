@@ -83,6 +83,15 @@ export default function ({}: ThemeVariables) {
     selfStretch: {
       alignSelf: 'stretch',
     },
+    selfCenter: {
+      alignSelf: 'center',
+    },
+    selfEnd: {
+      alignSelf: 'flex-end',
+    },
+    wrapper: {
+      flexWrap: 'wrap',
+    },
     /* Sizes Layouts */
     fill: {
       flex: 1,

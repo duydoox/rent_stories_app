@@ -3,10 +3,12 @@ import { ThemeNavigationColors } from '../../../../@types/theme';
 export const Colors = {
   primary: '#7454a5',
   textGray800: '#E0E0E0',
-  textGray400: '#969696',
-  textGray200: '#BABABA',
+  textGray400: '#ABABAB',
+  textGray200: '#969696',
   inputBackground: '#3a3a3a',
   circleButtonBackground: '#252732',
+  background: '#1B1A23',
+  black_30: 'rgba(255, 255, 255, 0.2)',
 };
 
 export const NavigationColors: Partial<ThemeNavigationColors> = {
