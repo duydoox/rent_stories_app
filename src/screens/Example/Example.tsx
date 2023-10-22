@@ -188,7 +188,7 @@ const Example = () => {
           </Text>
         </View>
 
-        <View
+        {/* <View
           style={[
             Layout.row,
             Layout.justifyContentBetween,
@@ -231,7 +231,7 @@ const Example = () => {
               style={{ tintColor: isDark ? '#A6A4F0' : '#44427D' }}
             />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </ScrollView>
   );
