@@ -11,8 +11,15 @@ export type MainParamsList = {
 
 export type ApplicationStackParamList = {
   Startup: undefined;
+  AddBook: { type: 'ADD' | 'EDIT' };
+  Bill: undefined;
   Main: NavigatorScreenParams<MainParamsList>;
 };
 
 export type ApplicationScreenProps =
   StackScreenProps<ApplicationStackParamList>;
+
+export type AddBookScreenProps = StackScreenProps<
+  ApplicationStackParamList,
+  'AddBook'
+>;

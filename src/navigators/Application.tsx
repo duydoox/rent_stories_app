@@ -1,17 +1,15 @@
 import React, { useEffect } from 'react';
 import { StatusBar, View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {
-  NavigationContainer,
-  useNavigationContainerRef,
-} from '@react-navigation/native';
-import { Startup } from '../screens';
+import { NavigationContainer } from '@react-navigation/native';
+import { AddBook, Bill, Startup } from '../screens';
 import { useTheme } from '../hooks';
 import { useFlipper } from '@react-navigation/devtools';
 import { ApplicationStackParamList } from '../../@types/navigation';
 import { MyDrawer } from './Drawer';
 import { useAppSelector } from '@/store';
 import i18next from 'i18next';
+import { navigationRef } from './utils';
 
 const Stack = createStackNavigator<ApplicationStackParamList>();
 
@@ -20,7 +18,7 @@ const ApplicationNavigator = () => {
   const { Layout, darkMode, NavigationTheme } = useTheme();
   const { colors } = NavigationTheme;
 
-  const navigationRef = useNavigationContainerRef();
+  // const navigationRef = useNavigationContainerRef();
 
   useFlipper(navigationRef);
 
@@ -38,6 +36,8 @@ const ApplicationNavigator = () => {
         <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Startup" component={Startup} />
+          <Stack.Screen name="AddBook" component={AddBook} />
+          <Stack.Screen name="Bill" component={Bill} />
           <Stack.Screen name="Main" component={MyDrawer} />
         </Stack.Navigator>
       </NavigationContainer>

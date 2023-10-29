@@ -313,9 +313,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         />
         <View>
           <Text style={[Fonts.textBold500, Fonts.textRegular]}>
-            Nguyễn Văn A
+            Nguyễn Văn Lý
           </Text>
-          <Text style={[Fonts.textTiny, Fonts.textPrimary]}>Nhân viên</Text>
+          <Text style={[Fonts.textTiny, Fonts.textPrimary]}>Quản lý</Text>
         </View>
       </TouchableOpacity>
     </Animated.View>

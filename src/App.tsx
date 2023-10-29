@@ -10,6 +10,7 @@ import {
   ImageViewerProvider,
   LoadingGlobalProvider,
 } from './hooks';
+import { MenuProvider } from 'react-native-popup-menu';
 
 const App = () => (
   <Provider store={store}>
@@ -22,11 +23,13 @@ const App = () => (
      */}
     <PersistGate loading={null} persistor={persistor}>
       <LoadingGlobalProvider>
-        <DatePickerProvider>
-          <ImageViewerProvider>
-            <ApplicationNavigator />
-          </ImageViewerProvider>
-        </DatePickerProvider>
+        <MenuProvider>
+          <DatePickerProvider>
+            <ImageViewerProvider>
+              <ApplicationNavigator />
+            </ImageViewerProvider>
+          </DatePickerProvider>
+        </MenuProvider>
       </LoadingGlobalProvider>
     </PersistGate>
   </Provider>

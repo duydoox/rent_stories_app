@@ -5,3 +5,5 @@ export { default as BookManager } from './BookManager/';
 export { default as RentBook } from './RentBook/';
 export { default as ReturnBook } from './ReturnBook/';
 export { default as Statistic } from './Statistic/';
+export { default as AddBook } from './AddBook/';
+export { default as Bill } from './Bill/';

@@ -26,6 +26,9 @@ export default function ({}: ThemeVariables) {
       edit: require('./assets/images/edit.png'),
       padlock: require('./assets/images/padlock.png'),
       logout: require('./assets/images/logout.png'),
+      back: require('./assets/images/back.png'),
+      menu: require('./assets/images/menu.png'),
+      search: require('./assets/images/search.png'),
     },
     avatar: {
       male_1: require('./assets/images/male_1.png'),

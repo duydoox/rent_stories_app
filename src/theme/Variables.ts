@@ -6,6 +6,7 @@
  */
 
 import { ThemeNavigationColors } from '../../@types/theme';
+import { Dimensions } from 'react-native';
 
 /**
  * Colors
@@ -55,11 +56,15 @@ const tiny = 5;
 const small = tiny * 2; // 20
 const regular = tiny * 3; // 30
 const large = regular * 2; // 60
+const fullHeight = Dimensions.get('screen').height;
+const fullWidth = Dimensions.get('screen').width;
 export const MetricsSizes = {
   tiny,
   small,
   regular,
   large,
+  fullHeight,
+  fullWidth,
 };
 
 export default {

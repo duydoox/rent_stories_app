@@ -6,12 +6,14 @@
 import { StyleSheet } from 'react-native';
 import buttonStyles from './components/Buttons';
 import imageStyles from './components/Images';
+import inputStyle from './components/TextInputs';
 import { CommonParams } from '../../@types/theme';
 
 export default function <C>({ Colors, ...args }: CommonParams<C>) {
   return {
     button: buttonStyles({ Colors, ...args }),
     imageStyles: imageStyles({ Colors, ...args }),
+    input: inputStyle({ Colors, ...args }),
     ...StyleSheet.create({
       //background
       backgroundPrimary: {
@@ -86,6 +88,10 @@ export default function <C>({ Colors, ...args }: CommonParams<C>) {
         ...args.Layout.fullWidth,
         backgroundColor: Colors.textGray400,
         marginVertical: args.MetricsSizes.tiny,
+      },
+      roundBottom: {
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.textGray200,
       },
     }),
   };
