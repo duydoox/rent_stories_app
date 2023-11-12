@@ -18,6 +18,7 @@ import i18next from 'i18next';
 import { Radio } from '@/components';
 import { useAppSelector } from '@/store';
 import { changelanguage } from '@/store/setting';
+import { resetNavigate } from '../utils';
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const progress = useDrawerProgress();
@@ -284,7 +285,10 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
               Đổi mật khẩu
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[Layout.rowHCenter, Gutters.tinyVPadding]}>
+          <TouchableOpacity
+            style={[Layout.rowHCenter, Gutters.tinyVPadding]}
+            onPress={() => resetNavigate([{ name: 'Login' }])}
+          >
             <Image
               source={Images.icons.logout}
               resizeMode="contain"

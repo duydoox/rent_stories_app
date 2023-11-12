@@ -1,4 +1,7 @@
-import { createNavigationContainerRef } from '@react-navigation/native';
+import {
+  CommonActions,
+  createNavigationContainerRef,
+} from '@react-navigation/native';
 import { ApplicationStackParamList } from 'types/navigation';
 
 export const navigationRef =
@@ -7,5 +10,19 @@ export const navigationRef =
 export function goBack() {
   if (navigationRef.isReady() && navigationRef.canGoBack()) {
     navigationRef.goBack();
+  }
+}
+
+export function resetNavigate(
+  routes: { name: keyof ApplicationStackParamList; params?: any }[],
+  index?: number,
+) {
+  if (navigationRef.isReady()) {
+    navigationRef.dispatch(
+      CommonActions.reset({
+        index: index ?? 1,
+        routes,
+      }),
+    );
   }
 }

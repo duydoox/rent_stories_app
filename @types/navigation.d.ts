@@ -13,6 +13,7 @@ export type ApplicationStackParamList = {
   Startup: undefined;
   AddBook: { type: 'ADD' | 'EDIT' };
   Bill: undefined;
+  Login: undefined;
   Main: NavigatorScreenParams<MainParamsList>;
 };
 
