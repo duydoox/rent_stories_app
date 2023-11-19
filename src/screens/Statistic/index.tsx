@@ -3,9 +3,13 @@ import { ScrollView, Text, View } from 'react-native';
 import { useTheme } from '../../hooks';
 import { Header } from '../../components';
 import { ApplicationScreenProps } from '../../../@types/navigation';
+import { useAppSelector } from '@/store';
+import { dayFormat } from '@/utils';
 
 const Statistic = ({}: ApplicationScreenProps) => {
   const { Layout, Gutters, Common, Fonts, Colors } = useTheme();
+
+  const { truyenDuocThues } = useAppSelector(state => state.faker);
 
   return (
     <View style={[Layout.fill]}>
@@ -33,7 +37,7 @@ const Statistic = ({}: ApplicationScreenProps) => {
               { backgroundColor: Colors.inputBackground },
             ]}
           >
-            <Text style={[Fonts.textSmall]}>Từ: 20/03/2023</Text>
+            <Text style={[Fonts.textSmall]}>Từ: {dayFormat(new Date())}</Text>
           </View>
           <View
             style={[
@@ -46,7 +50,7 @@ const Statistic = ({}: ApplicationScreenProps) => {
               { backgroundColor: Colors.inputBackground },
             ]}
           >
-            <Text style={[Fonts.textSmall]}>Đến: 20/03/2023</Text>
+            <Text style={[Fonts.textSmall]}>Đến: {dayFormat(new Date())}</Text>
           </View>
         </View>
         <View style={[Gutters.smallHPadding]}>

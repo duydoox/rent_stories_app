@@ -29,6 +29,11 @@ export default function ({}: ThemeVariables) {
       back: require('./assets/images/back.png'),
       menu: require('./assets/images/menu.png'),
       search: require('./assets/images/search.png'),
+      pencil: require('./assets/images/pencil.png'),
+      add: require('./assets/images/add.png'),
+      barcode: require('./assets/images/barcode.png'),
+      barcode_scanner: require('./assets/images/barcode_scanner.png'),
+      remove: require('./assets/images/remove.png'),
     },
     avatar: {
       male_1: require('./assets/images/male_1.png'),

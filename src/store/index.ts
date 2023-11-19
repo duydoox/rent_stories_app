@@ -17,12 +17,14 @@ import { api } from '../services/api';
 import theme from './theme';
 import setting from './setting';
 import auth from './auth';
+import faker from './faker';
 import { TypedUseSelectorHook, useSelector } from 'react-redux';
 
 const reducers = combineReducers({
   theme,
   setting,
   auth,
+  faker,
   [api.reducerPath]: api.reducer,
 });
 
@@ -45,7 +47,7 @@ export const reduxStorage: Storage = {
 const persistConfig = {
   key: 'root',
   storage: reduxStorage,
-  whitelist: ['theme', 'setting', 'auth'],
+  whitelist: ['theme', 'setting', 'auth', 'faker'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

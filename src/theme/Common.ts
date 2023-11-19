@@ -74,6 +74,10 @@ export default function <C>({ Colors, ...args }: CommonParams<C>) {
         height: args.MetricsSizes.regular,
         width: args.MetricsSizes.regular,
       },
+      iconSize: {
+        height: args.MetricsSizes.regular * 1.5,
+        width: args.MetricsSizes.regular * 1.5,
+      },
       largeSize: {
         height: args.MetricsSizes.large,
         width: args.MetricsSizes.large,

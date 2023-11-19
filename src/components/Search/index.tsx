@@ -1,5 +1,5 @@
-import { Image, Text, TextInput, View } from 'react-native';
-import React, { memo } from 'react';
+import { ActivityIndicator, Image, Text, TextInput, View } from 'react-native';
+import React, { memo, useState } from 'react';
 import { useTheme } from '@/hooks';
 import {
   Menu,
@@ -8,10 +8,23 @@ import {
   MenuTrigger,
 } from 'react-native-popup-menu';
 
-const Search = memo<{ placeholder?: string; opened?: boolean }>(
-  ({ placeholder = 'Tìm kiếm truyện', opened }) => {
+const Search = memo<{
+  placeholder?: string;
+  items?: string[];
+  onSearch?: (value?: string) => void;
+  onSelect?: () => void;
+  showMenu?: boolean;
+}>(
+  ({
+    placeholder = 'Tìm kiếm truyện',
+    items,
+    onSearch,
+    onSelect,
+    showMenu = true,
+  }) => {
     const { Colors, Layout, Images, Common, Gutters, Fonts, MetricsSizes } =
       useTheme();
+    const [value, setValue] = useState('');
 
     return (
       <View style={[Layout.rowHCenter]}>
@@ -33,6 +46,8 @@ const Search = memo<{ placeholder?: string; opened?: boolean }>(
           placeholder={placeholder}
           style={[Fonts.textSmall, Layout.fill]}
           placeholderTextColor={Colors.textGray200}
+          value={value}
+          onChangeText={setValue}
         />
 
         <Menu>
@@ -43,6 +58,8 @@ const Search = memo<{ placeholder?: string; opened?: boolean }>(
               Gutters.smallHPadding,
               Common.radiusTiny,
             ]}
+            onPress={() => onSearch?.(value)}
+            disabled={!showMenu}
           >
             <Text style={[Fonts.textNight]}>Tìm kiếm</Text>
           </MenuTrigger>
@@ -56,12 +73,12 @@ const Search = memo<{ placeholder?: string; opened?: boolean }>(
               },
             ]}
           >
-            <MenuOption onSelect={() => {}}>
-              <Text>Tấm cám</Text>
-            </MenuOption>
-            <MenuOption onSelect={() => {}}>
-              <Text>Truyện kể bé nghe</Text>
-            </MenuOption>
+            {items?.map((v, i) => (
+              <MenuOption onSelect={onSelect} key={i}>
+                <Text style={[Fonts.textSmall]}>{v}</Text>
+              </MenuOption>
+            ))}
+            {!items && <ActivityIndicator color={Colors.primary} />}
           </MenuOptions>
         </Menu>
       </View>

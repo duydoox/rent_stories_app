@@ -1,30 +1,29 @@
 import React from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../hooks';
-import { ApplicationScreenProps } from '../../../@types/navigation';
+import { BookSelectScreenProps } from '../../../@types/navigation';
 import { Header, Search } from '@/components';
 import { useAppSelector } from '@/store';
 import { Truyen } from 'types/faker';
 import { numberWithCommas } from '@/utils';
+import { goBack } from '@/navigators/utils';
 
-const BookManager = ({ navigation }: ApplicationScreenProps) => {
-  const { Layout, Gutters, Fonts, Common, Images, Colors } = useTheme();
+const BookSelect = ({ route }: BookSelectScreenProps) => {
+  const { Layout, Gutters, Fonts, Common } = useTheme();
+  const { chooseBook } = route.params;
 
   const { truyens } = useAppSelector(state => state.faker);
 
   const truyenShow = truyens;
 
-  const suaTruyen = (truyen: Partial<Truyen>) => {
-    navigation.navigate('AddBook', { type: 'EDIT', truyen: truyen });
-  };
-
-  const themTruyen = () => {
-    navigation.navigate('AddBook', { type: 'ADD' });
+  const chonTruyen = (truyen: Partial<Truyen>) => {
+    chooseBook(truyen);
+    goBack();
   };
 
   return (
     <View style={[Layout.fill]}>
-      <Header title="Quản lý truyện" isMenu />
+      <Header title="Chọn truyện thuê" isMenu={false} />
       <View
         style={[
           Gutters.smallHPadding,
@@ -46,15 +45,10 @@ const BookManager = ({ navigation }: ApplicationScreenProps) => {
                   Gutters.tinyVMargin,
                   Gutters.smallHPadding,
                 ]}
-                onPress={() => suaTruyen(v)}
+                onPress={() => chonTruyen(v)}
               >
                 <View style={[Layout.rowHCenter, Layout.justifyContentBetween]}>
                   <Text style={[Fonts.textRegular]}>{v.tenTruyen}</Text>
-                  <Image
-                    source={Images.icons.pencil}
-                    style={[Common.iconSize, { tintColor: Colors.primary }]}
-                    resizeMode="contain"
-                  />
                 </View>
                 <Text style={[Fonts.textTiny, Fonts.textLight]}>
                   Số lượng: {v.soLuong}
@@ -67,23 +61,8 @@ const BookManager = ({ navigation }: ApplicationScreenProps) => {
           </View>
         </View>
       </ScrollView>
-      <TouchableOpacity
-        style={[
-          Layout.selfCenter,
-          Common.backgroundPrimary,
-          Gutters.smallVPadding,
-          Gutters.regularHPadding,
-          Gutters.smallHMargin,
-          Common.radiusTiny,
-          Gutters.smallVMargin,
-          Layout.selfEnd,
-        ]}
-        onPress={themTruyen}
-      >
-        <Text style={[Fonts.textSmall, Fonts.textBold500]}>Thêm truyện</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
-export default BookManager;
+export default BookSelect;

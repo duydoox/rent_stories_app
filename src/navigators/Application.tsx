@@ -2,7 +2,14 @@ import React, { useEffect } from 'react';
 import { StatusBar, View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { AddBook, Bill, Login, Startup } from '../screens';
+import {
+  AddBook,
+  AddCustomer,
+  Bill,
+  BookSelect,
+  Login,
+  Startup,
+} from '../screens';
 import { useTheme } from '../hooks';
 import { useFlipper } from '@react-navigation/devtools';
 import { ApplicationStackParamList } from '../../@types/navigation';
@@ -10,6 +17,7 @@ import { MyDrawer } from './Drawer';
 import { useAppSelector } from '@/store';
 import i18next from 'i18next';
 import { navigationRef } from './utils';
+import ReturnBookDetail from '@/screens/ReturnBookDetail';
 
 const Stack = createStackNavigator<ApplicationStackParamList>();
 
@@ -44,6 +52,9 @@ const ApplicationNavigator = () => {
           <Stack.Screen name="Startup" component={Startup} />
           <Stack.Screen name="AddBook" component={AddBook} />
           <Stack.Screen name="Bill" component={Bill} />
+          <Stack.Screen name="BookSelect" component={BookSelect} />
+          <Stack.Screen name="AddCustomer" component={AddCustomer} />
+          <Stack.Screen name="ReturnBookDetail" component={ReturnBookDetail} />
           <Stack.Screen name="Main" component={MyDrawer} />
         </Stack.Navigator>
       </NavigationContainer>

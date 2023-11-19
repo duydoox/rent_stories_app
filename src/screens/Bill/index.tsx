@@ -10,9 +10,12 @@ import {
 import { useTheme } from '../../hooks';
 import { Header } from '@/components';
 import { format } from 'date-fns';
+import { BillScreenProps } from 'types/navigation';
+import { numberWithCommas } from '@/utils';
 
-const Bill = () => {
+const Bill = ({ route }: BillScreenProps) => {
   const { Common, Fonts, Gutters, Layout, Images } = useTheme();
+  const { phieuThue } = route.params;
 
   return (
     <View style={[Layout.fill]}>
@@ -21,7 +24,12 @@ const Bill = () => {
         <View style={[Gutters.smallHPadding, Gutters.smallTMargin]}>
           <Text style={[Fonts.titleSmall]}>Hóa đơn</Text>
           <Text style={[Fonts.textTiny]}>
-            Ngày thuê: {'           ' + format(new Date(), 'HH:mm dd/MM/yy')}
+            Ngày thuê
+            {'           : ' +
+              format(
+                new Date(phieuThue?.truyenDuocThue?.[0]?.ngayThue),
+                'HH:mm dd/MM/yy',
+              )}
           </Text>
           <Text style={[Fonts.textTiny]}>
             Ngày thanh toán: {format(new Date(), 'HH:mm dd/MM/yy')}
@@ -35,7 +43,7 @@ const Bill = () => {
               Fonts.textBlue,
             ]}
           >
-            Hóa đơn cho: Nguyễn Văn Bách
+            Hóa đơn cho: {phieuThue.khachHang?.tenKhachHang}
           </Text>
 
           <View style={[Gutters.smallTMargin]}>
@@ -50,7 +58,7 @@ const Bill = () => {
                 Tên
               </Text>
               <Text style={[Fonts.textSmall, Fonts.textBold500, style.count]}>
-                Số ngày
+                Số lượng
               </Text>
               <Text style={[Fonts.textSmall, Fonts.textBold500, style.price]}>
                 Đơn giá
@@ -59,25 +67,29 @@ const Bill = () => {
                 Thành tiền
               </Text>
             </View>
-            <View style={[Layout.row, Gutters.tinyVPadding]}>
-              <Text style={[Fonts.textSmall, style.name]}>Tấm cám</Text>
-              <Text style={[Fonts.textSmall, style.count]}>1</Text>
-              <Text style={[Fonts.textSmall, style.price]}>3000</Text>
-              <Text style={[Fonts.textSmall, style.money]}>3000</Text>
-            </View>
-            <View style={[Layout.row, Gutters.tinyVPadding]}>
-              <Text style={[Fonts.textSmall, style.name]}>
-                Nghìn lẻ một đêm
-              </Text>
-              <Text style={[Fonts.textSmall, style.count]}>1</Text>
-              <Text style={[Fonts.textSmall, style.price]}>5000</Text>
-              <Text style={[Fonts.textSmall, style.money]}>5000</Text>
-            </View>
+            {phieuThue.truyenDuocThue?.map((item, index) => (
+              <View style={[Layout.row, Gutters.tinyVPadding]} key={index}>
+                <Text style={[Fonts.textSmall, style.name]}>
+                  {item.truyen?.tenTruyen}
+                </Text>
+                <Text style={[Fonts.textSmall, style.count]}>
+                  {item.soLuong}
+                </Text>
+                <Text style={[Fonts.textSmall, style.price]}>
+                  {item?.giaThue}
+                </Text>
+                <Text style={[Fonts.textSmall, style.money]}>
+                  {item.tongTien}
+                </Text>
+              </View>
+            ))}
 
             <View style={[Gutters.smallVMargin]}>
               <View style={[Layout.row, Layout.justifyContentBetween]}>
                 <Text style={[Fonts.textTiny]}>Tổng cộng: </Text>
-                <Text style={[Fonts.textTiny]}>8.000đ</Text>
+                <Text style={[Fonts.textTiny]}>
+                  {numberWithCommas(phieuThue.tongTien ?? 0)}đ
+                </Text>
               </View>
               <View style={[Layout.row, Layout.justifyContentBetween]}>
                 <Text style={[Fonts.textTiny]}>Thuế (0%): </Text>
@@ -91,7 +103,7 @@ const Bill = () => {
                 <Text
                   style={[Fonts.textRegular, Fonts.textBold500, Fonts.textRed]}
                 >
-                  8.000đ
+                  {numberWithCommas(phieuThue.tongTien ?? 0)}đ
                 </Text>
               </View>
             </View>
@@ -150,7 +162,6 @@ export default Bill;
 const style = StyleSheet.create({
   name: {
     flex: 1.8,
-    textAlign: 'center',
   },
   count: {
     flex: 0.9,
@@ -162,6 +173,6 @@ const style = StyleSheet.create({
   },
   money: {
     flex: 1,
-    textAlign: 'center',
+    textAlign: 'right',
   },
 });

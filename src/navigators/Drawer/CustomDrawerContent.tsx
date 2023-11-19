@@ -36,6 +36,12 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const scrollRef = useRef<Animated.ScrollView>(null);
   const dispatch = useDispatch();
   const { language } = useAppSelector(_state => _state.setting);
+  const { nhanVien } = useAppSelector(s => s.auth);
+
+  const routes =
+    nhanVien?.viTri === 'QL'
+      ? state.routes
+      : state.routes.filter(r => r.name !== 'Statistic');
 
   const animatedStyles = useAnimatedStyle(() => {
     const scale = interpolate(progress.value, [0, 1], [0.6, 1]);
@@ -128,7 +134,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
             Common.backgroundCommon,
           ]}
         >
-          {state.routes.map((route, index) => {
+          {routes.map((route, index) => {
             const isFocus = state.index === index;
             const { options } = descriptors[route.key];
             const onPress = () => {
@@ -260,9 +266,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         >
           <View>
             <Text style={[Fonts.textSmall, Fonts.textBold500]}>
-              Nguyễn Văn A
+              {nhanVien?.ten}
             </Text>
-            <Text style={[Fonts.textSmall]}>096932787</Text>
+            <Text style={[Fonts.textSmall]}>
+              {nhanVien?.soDienThoai ?? '096932787'}
+            </Text>
           </View>
           <View style={[Common.seperate]} />
           <TouchableOpacity style={[Layout.rowHCenter, Gutters.tinyVPadding]}>
@@ -317,9 +325,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         />
         <View>
           <Text style={[Fonts.textBold500, Fonts.textRegular]}>
-            Nguyễn Văn Lý
+            {nhanVien?.ten}
           </Text>
-          <Text style={[Fonts.textTiny, Fonts.textPrimary]}>Quản lý</Text>
+          <Text style={[Fonts.textTiny, Fonts.textPrimary]}>
+            {nhanVien?.viTri === 'QL' ? 'Quản lý' : 'Nhân viên'}
+          </Text>
         </View>
       </TouchableOpacity>
     </Animated.View>

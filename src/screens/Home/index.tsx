@@ -1,17 +1,55 @@
 import React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { useTheme } from '../../hooks';
 import { Brand, Header } from '../../components';
 import { ApplicationScreenProps } from '../../../@types/navigation';
+import useDrawerRoute from '@/navigators/Drawer/drawerRoutes';
+import { useAppSelector } from '@/store';
 
-const Home = ({}: ApplicationScreenProps) => {
-  const { Layout } = useTheme();
+const Home = ({ navigation }: ApplicationScreenProps) => {
+  const { Layout, Fonts, Gutters, Common } = useTheme();
+
+  const routeDrawer = useDrawerRoute();
+
+  const { nhanVien } = useAppSelector(state => state.auth);
+
+  const showRoutes = routeDrawer?.filter(
+    v =>
+      v.route !== 'Home' &&
+      (nhanVien?.viTri === 'NV' ? v.route !== 'Statistic' : true),
+  );
 
   return (
     <View style={[Layout.fill]}>
       <Header title="Trang chủ" isMenu />
       <View style={[Layout.center, Layout.fill]}>
-        <Brand />
+        <View style={[Layout.wrapper, Layout.row]}>
+          {showRoutes?.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                Layout.center,
+                Gutters.largeVPadding,
+                Common.shadow,
+                Common.backgroundCommon,
+                Common.radiusRegular,
+                Gutters.regularVMargin,
+                Gutters.smallHMargin,
+                { width: '44.9%' },
+              ]}
+              onPress={() => navigation.navigate(item.route)}
+            >
+              <Image
+                source={item.icon}
+                style={[Common.commonSize, Gutters.regularBMargin]}
+                resizeMode="contain"
+              />
+              <Text style={[Fonts.textSmall, Fonts.textBold500]}>
+                {item.lable}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </View>
   );

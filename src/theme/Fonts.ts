@@ -82,9 +82,15 @@ export default function ({ FontSize, Colors }: ThemeVariables) {
     textOrange: {
       color: Colors.orange,
     },
+    textViolet: {
+      color: Colors.circleButtonColor,
+    },
     textLobster: {
       fontFamily: 'lobster',
       fontWeight: 'normal',
+    },
+    textItalic: {
+      fontStyle: 'italic',
     },
   });
 }

@@ -7,3 +7,6 @@ export { default as Statistic } from './Statistic/';
 export { default as AddBook } from './AddBook/';
 export { default as Bill } from './Bill/';
 export { default as Login } from './Login/';
+export { default as BookSelect } from './BookSelect/';
+export { default as AddCustomer } from './AddCustomer/';
+export { default as ReturnBook } from './ReturnBook/';

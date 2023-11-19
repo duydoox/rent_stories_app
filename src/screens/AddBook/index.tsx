@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   Text,
@@ -9,13 +9,62 @@ import {
 import { useTheme } from '../../hooks';
 import { AddBookScreenProps } from '../../../@types/navigation';
 import { Header } from '@/components';
+import { useAppSelector } from '@/store';
+import { useDispatch } from 'react-redux';
+import { Truyen } from 'types/faker';
+import { doFaker } from '@/store/faker';
+import { goBack } from '@/navigators/utils';
+import { randomId } from '@/utils';
 
 const AddBook = ({ route }: AddBookScreenProps) => {
   const { Layout, Gutters, Fonts, Common, Colors } = useTheme();
-  const { type } = route.params;
+  const { type, truyen: oldTruyen } = route.params;
 
   const titleHeader = type === 'ADD' ? 'Thêm truyện' : 'Sửa truyện';
   const textButton = type === 'ADD' ? 'Thêm' : 'Sửa';
+
+  const [truyen, setTruyen] = useState<Partial<Truyen>>(
+    oldTruyen ?? { id: randomId() },
+  );
+
+  const { truyens } = useAppSelector(state => state.faker);
+  const dispatch = useDispatch();
+
+  const themTruyen = () => {
+    dispatch(
+      doFaker({
+        truyens: [...(truyens ?? []), truyen],
+      }),
+    );
+  };
+
+  const suaTruyen = () => {
+    const truyenDaSuas = truyens?.map(v => (v.id === truyen.id ? truyen : v));
+    dispatch(
+      doFaker({
+        truyens: truyenDaSuas,
+      }),
+    );
+  };
+
+  const xoaTruyen = () => {
+    const truyenSauXoa = truyens?.filter(v => v.id !== truyen.id);
+    dispatch(
+      doFaker({
+        truyens: truyenSauXoa,
+      }),
+    );
+    goBack();
+  };
+
+  const submit = () => {
+    if (type === 'ADD') {
+      themTruyen();
+    } else {
+      suaTruyen();
+    }
+    goBack();
+  };
 
   return (
     <View style={[Layout.fill]}>
@@ -32,6 +81,8 @@ const AddBook = ({ route }: AddBookScreenProps) => {
                 Gutters.tinyTMargin,
                 Common.input.text,
               ]}
+              value={truyen.tenTruyen ?? ''}
+              onChangeText={text => setTruyen({ ...truyen, tenTruyen: text })}
             />
           </View>
 
@@ -48,19 +99,24 @@ const AddBook = ({ route }: AddBookScreenProps) => {
                 Common.input.text,
               ]}
               keyboardType="numeric"
+              value={String(truyen.namSanXuat ?? '')}
+              onChangeText={text => setTruyen({ ...truyen, namSanXuat: +text })}
             />
           </View>
 
           <View style={[Gutters.smallBMargin]}>
-            <Text style={[Fonts.textSmall, Fonts.textBold500]}>Công ty</Text>
+            <Text style={[Fonts.textSmall, Fonts.textBold500]}>Số lượng</Text>
             <TextInput
-              placeholder="Nhập tên công ty"
+              placeholder="Nhập số lượng"
               placeholderTextColor={Colors.textGray200}
               style={[
                 Common.input.outlineRounded,
                 Gutters.tinyTMargin,
                 Common.input.text,
               ]}
+              keyboardType="numeric"
+              value={String(truyen.soLuong ?? '')}
+              onChangeText={text => setTruyen({ ...truyen, soLuong: +text })}
             />
           </View>
 
@@ -74,6 +130,8 @@ const AddBook = ({ route }: AddBookScreenProps) => {
                 Gutters.tinyTMargin,
                 Common.input.text,
               ]}
+              value={truyen.tacGia ?? ''}
+              onChangeText={text => setTruyen({ ...truyen, tacGia: text })}
             />
           </View>
 
@@ -90,6 +148,8 @@ const AddBook = ({ route }: AddBookScreenProps) => {
                 Common.input.text,
               ]}
               keyboardType="numeric"
+              value={String(truyen.giaThue ?? '')}
+              onChangeText={text => setTruyen({ ...truyen, giaThue: +text })}
             />
           </View>
         </View>
@@ -106,6 +166,7 @@ const AddBook = ({ route }: AddBookScreenProps) => {
               Gutters.smallBMargin,
               Gutters.smallHMargin,
             ]}
+            onPress={xoaTruyen}
           >
             <Text style={[Fonts.textSmall, Fonts.textBold500]}>Xóa</Text>
           </TouchableOpacity>
@@ -120,6 +181,7 @@ const AddBook = ({ route }: AddBookScreenProps) => {
             Gutters.smallBMargin,
             Gutters.smallRMargin,
           ]}
+          onPress={submit}
         >
           <Text style={[Fonts.textSmall, Fonts.textBold500]}>{textButton}</Text>
         </TouchableOpacity>
