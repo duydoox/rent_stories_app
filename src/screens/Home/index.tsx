@@ -1,10 +1,11 @@
 import React from 'react';
 import { TouchableOpacity, View, Text, Image } from 'react-native';
 import { useTheme } from '../../hooks';
-import { Brand, Header } from '../../components';
+import { Header } from '../../components';
 import { ApplicationScreenProps } from '../../../@types/navigation';
 import useDrawerRoute from '@/navigators/Drawer/drawerRoutes';
 import { useAppSelector } from '@/store';
+import { useTimKiemTruyenQuery } from '@/services/modules/truyen';
 
 const Home = ({ navigation }: ApplicationScreenProps) => {
   const { Layout, Fonts, Gutters, Common } = useTheme();
@@ -12,6 +13,12 @@ const Home = ({ navigation }: ApplicationScreenProps) => {
   const routeDrawer = useDrawerRoute();
 
   const { nhanVien } = useAppSelector(state => state.auth);
+
+  const { data: truyens } = useTimKiemTruyenQuery({
+    keyword: '',
+  });
+
+  console.log(truyens, 'truyens');
 
   const showRoutes = routeDrawer?.filter(
     v =>
@@ -31,7 +38,7 @@ const Home = ({ navigation }: ApplicationScreenProps) => {
                 Layout.center,
                 Gutters.largeVPadding,
                 Common.shadow,
-                Common.backgroundCommon,
+                Common.backgroundWhite,
                 Common.radiusRegular,
                 Gutters.regularVMargin,
                 Gutters.smallHMargin,

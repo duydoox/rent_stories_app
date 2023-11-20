@@ -19,6 +19,7 @@ import { Radio } from '@/components';
 import { useAppSelector } from '@/store';
 import { changelanguage } from '@/store/setting';
 import { resetNavigate } from '../utils';
+import { setToken } from '@/store/auth';
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const progress = useDrawerProgress();
@@ -80,6 +81,15 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const onChangeLanguage = (lang: 'fr' | 'en') => {
     i18next.changeLanguage(lang);
     dispatch(changelanguage({ language: lang }));
+  };
+
+  const logout = () => {
+    dispatch(
+      setToken({
+        accessToken: null,
+      }),
+    );
+    resetNavigate([{ name: 'Login' }]);
   };
 
   return (
@@ -266,7 +276,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         >
           <View>
             <Text style={[Fonts.textSmall, Fonts.textBold500]}>
-              {nhanVien?.ten}
+              {nhanVien?.tenNhanVien ?? 'Tên nhân viên'}
             </Text>
             <Text style={[Fonts.textSmall]}>
               {nhanVien?.soDienThoai ?? '096932787'}
@@ -295,7 +305,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[Layout.rowHCenter, Gutters.tinyVPadding]}
-            onPress={() => resetNavigate([{ name: 'Login' }])}
+            onPress={logout}
           >
             <Image
               source={Images.icons.logout}
@@ -325,7 +335,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         />
         <View>
           <Text style={[Fonts.textBold500, Fonts.textRegular]}>
-            {nhanVien?.ten}
+            {nhanVien?.tenNhanVien ?? 'Tên nhân viên'}
           </Text>
           <Text style={[Fonts.textTiny, Fonts.textPrimary]}>
             {nhanVien?.viTri === 'QL' ? 'Quản lý' : 'Nhân viên'}

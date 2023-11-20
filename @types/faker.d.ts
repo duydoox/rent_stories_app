@@ -1,12 +1,12 @@
 export type CuaHang = {
-  id: string;
+  maCuaHang: string;
   tenCuaHang: string;
   diaChi: string;
   moTa: string;
 };
 
 export type Truyen = {
-  id: string;
+  maTruyen: string;
   tenTruyen: string;
   namSanXuat: number;
   tacGia: string;
@@ -17,10 +17,9 @@ export type Truyen = {
 };
 
 export type NhanVien = {
-  id: string;
-  ten: string;
+  maNhanVien: string;
+  tenNhanVien: string;
   username: string;
-  password: string;
   viTri: 'NV' | 'QL';
   soDienThoai: string;
   diaChi: string;
@@ -30,13 +29,13 @@ export type NhanVien = {
 };
 
 export type KhachHang = {
-  id: string;
+  maKhachHang: string;
   tenKhachHang: string;
   soDienThoai: string;
 };
 
 export type TruyenDuocThue = {
-  id: string;
+  maTruyenDuocThue: string;
   soLuong: number;
   giaThue: number;
   tongTien: number;
@@ -47,7 +46,7 @@ export type TruyenDuocThue = {
 };
 
 export type PhieuThue = {
-  id: string;
+  maPhieuThue: string;
   ghiChu: string;
   tongTien: number;
   nhanVien: Partial<NhanVien>;
@@ -56,7 +55,7 @@ export type PhieuThue = {
 };
 
 export type HoaDon = {
-  id: string;
+  maHoaDon: string;
   ngayTaoHoaDon: string;
   tienPhat: number;
   tongTien: number;

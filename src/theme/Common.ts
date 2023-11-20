@@ -31,6 +31,12 @@ export default function <C>({ Colors, ...args }: CommonParams<C>) {
       backgroundCommon: {
         backgroundColor: Colors.background,
       },
+      backgroundInput: {
+        backgroundColor: Colors.inputBackground,
+      },
+      backgroundButton: {
+        backgroundColor: Colors.circleButtonBackground,
+      },
       //input
       textInput: {
         backgroundColor: Colors.inputBackground,

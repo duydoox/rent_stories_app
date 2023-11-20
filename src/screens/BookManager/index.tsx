@@ -1,18 +1,34 @@
-import React from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useTheme } from '../../hooks';
 import { ApplicationScreenProps } from '../../../@types/navigation';
 import { Header, Search } from '@/components';
-import { useAppSelector } from '@/store';
 import { Truyen } from 'types/faker';
 import { numberWithCommas } from '@/utils';
+import { useTimKiemTruyenQuery } from '@/services/modules/truyen';
+import { RefreshControl } from 'react-native';
 
 const BookManager = ({ navigation }: ApplicationScreenProps) => {
   const { Layout, Gutters, Fonts, Common, Images, Colors } = useTheme();
+  const [keyword, setKeyword] = useState('');
 
-  const { truyens } = useAppSelector(state => state.faker);
+  const {
+    data: truyens,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useTimKiemTruyenQuery({
+    keyword: keyword,
+  });
 
-  const truyenShow = truyens;
+  const truyenShow = truyens?.data;
 
   const suaTruyen = (truyen: Partial<Truyen>) => {
     navigation.navigate('AddBook', { type: 'EDIT', truyen: truyen });
@@ -25,16 +41,17 @@ const BookManager = ({ navigation }: ApplicationScreenProps) => {
   return (
     <View style={[Layout.fill]}>
       <Header title="Quản lý truyện" isMenu />
-      <View
-        style={[
-          Gutters.smallHPadding,
-          Gutters.smallVMargin,
-          Common.backgroundCommon,
-        ]}
+      <Search
+        showMenu={false}
+        onSearch={e => {
+          setKeyword(e ?? '');
+        }}
+      />
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+        }
       >
-        <Search />
-      </View>
-      <ScrollView>
         <View>
           <View>
             {truyenShow?.map((v, i) => (
@@ -42,21 +59,32 @@ const BookManager = ({ navigation }: ApplicationScreenProps) => {
                 key={i}
                 style={[
                   Gutters.tinyVPadding,
-                  Common.backgroundCommon,
+                  Common.backgroundWhite,
                   Gutters.tinyVMargin,
                   Gutters.smallHPadding,
                 ]}
                 onPress={() => suaTruyen(v)}
               >
                 <View style={[Layout.rowHCenter, Layout.justifyContentBetween]}>
-                  <Text style={[Fonts.textRegular]}>{v.tenTruyen}</Text>
+                  <Text
+                    style={[
+                      Fonts.textSmall,
+                      Fonts.textPrimary,
+                      Fonts.textBold500,
+                    ]}
+                  >
+                    Mã truyện: {v.maTruyen}
+                  </Text>
                   <Image
                     source={Images.icons.pencil}
                     style={[Common.iconSize, { tintColor: Colors.primary }]}
                     resizeMode="contain"
                   />
                 </View>
-                <Text style={[Fonts.textTiny, Fonts.textLight]}>
+                <Text style={[Fonts.textSmall, Fonts.textBlue]}>
+                  Tên truyện: {v.tenTruyen}
+                </Text>
+                <Text style={[Fonts.textSmall, Fonts.textOrange]}>
                   Số lượng: {v.soLuong}
                 </Text>
                 <Text style={[Fonts.textSmall]}>
@@ -64,6 +92,19 @@ const BookManager = ({ navigation }: ApplicationScreenProps) => {
                 </Text>
               </TouchableOpacity>
             ))}
+            {truyenShow?.length === 0 && (
+              <Text
+                style={[Fonts.textSmall, Fonts.textError, Fonts.textCenter]}
+              >
+                Không tìm thấy truyện nào
+              </Text>
+            )}
+            {isLoading && (
+              <ActivityIndicator
+                color={Colors.primary}
+                style={[Layout.center]}
+              />
+            )}
           </View>
         </View>
       </ScrollView>

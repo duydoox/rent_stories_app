@@ -11,6 +11,9 @@ import {
   LoadingGlobalProvider,
 } from './hooks';
 import { MenuProvider } from 'react-native-popup-menu';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreAllLogs();
 
 const App = () => (
   <Provider store={store}>

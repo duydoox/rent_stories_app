@@ -46,7 +46,7 @@ const ApplicationNavigator = () => {
         <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
         <Stack.Navigator
           screenOptions={{ headerShown: false }}
-          initialRouteName={accessToken ? Main : Login}
+          initialRouteName={accessToken ? 'Main' : 'Login'}
         >
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Startup" component={Startup} />

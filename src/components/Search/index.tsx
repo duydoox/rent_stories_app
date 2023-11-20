@@ -27,7 +27,14 @@ const Search = memo<{
     const [value, setValue] = useState('');
 
     return (
-      <View style={[Layout.rowHCenter]}>
+      <View
+        style={[
+          Layout.rowHCenter,
+          Common.backgroundWhite,
+          Gutters.smallHPadding,
+          Gutters.smallVMargin,
+        ]}
+      >
         <View
           style={[
             Common.largeSize,
@@ -50,7 +57,7 @@ const Search = memo<{
           onChangeText={setValue}
         />
 
-        <Menu>
+        <Menu opened={showMenu}>
           <MenuTrigger
             style={[
               Common.backgroundPrimary,
@@ -59,7 +66,7 @@ const Search = memo<{
               Common.radiusTiny,
             ]}
             onPress={() => onSearch?.(value)}
-            disabled={!showMenu}
+            // disabled={!showMenu}
           >
             <Text style={[Fonts.textNight]}>Tìm kiếm</Text>
           </MenuTrigger>

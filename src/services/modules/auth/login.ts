@@ -4,7 +4,7 @@ import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions
 import { NhanVien } from 'types/faker';
 
 export const login = (build: EndpointBuilder<any, any, any>) =>
-  build.mutation<ResGetInfoT, ReqGetInfoT>({
+  build.mutation<ResLoginT, ReqLoginT>({
     query: ({ ...body }) => ({
       url: 'auth/login',
       method: 'POST',
@@ -30,12 +30,12 @@ export const login = (build: EndpointBuilder<any, any, any>) =>
     },
   });
 
-export type ResGetInfoT = ResponseT<{
+export type ResLoginT = ResponseT<{
   accessToken: string;
   nhanVien: NhanVien;
 }>;
 
-export type ReqGetInfoT = {
+export type ReqLoginT = {
   username: string;
   password: string;
 };

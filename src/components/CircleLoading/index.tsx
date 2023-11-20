@@ -45,7 +45,7 @@ const CircleLoading = () => {
           borderRadius: MetricsSizes.large,
           backgroundColor: Colors.white_40,
         },
-        Common.shadow,
+        Common.backgroundWhite,
       ]}
     >
       <Animated.View

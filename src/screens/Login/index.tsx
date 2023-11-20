@@ -4,53 +4,30 @@ import { useTheme } from '../../hooks';
 import { Brand } from '../../components';
 import { ApplicationScreenProps } from '../../../@types/navigation';
 import { resetNavigate } from '@/navigators/utils';
-import { useDispatch } from 'react-redux';
-import { setNhanVien } from '@/store/auth';
-import { useAppSelector } from '@/store';
-import { NhanVien } from 'types/faker';
-import { randomId } from '@/utils';
-import { doFaker } from '@/store/faker';
+import { useLoginMutation } from '@/services/modules/auth';
+import useLoadingGlobal from '@/hooks/useLoadingGlobal';
 
 const Login = ({}: ApplicationScreenProps) => {
   const { Layout, MetricsSizes, Gutters, Fonts, Common, Colors } = useTheme();
 
-  const [username, setUsername] = useState<string>('quanly');
-  const [password, setPassword] = useState<string>('123123');
+  const [username, setUsername] = useState<string>('duy2');
+  const [password, setPassword] = useState<string>('123');
 
-  const { nhanViens } = useAppSelector(state => state.faker);
-  const dispatch = useDispatch();
+  const [handleLoginApi] = useLoginMutation({});
+  const loading = useLoadingGlobal();
 
   const onLogin = () => {
-    const nv = nhanViens?.find(
-      item => item.username === username && item.password === password,
-    );
-    if (nv) {
-      dispatch(
-        setNhanVien({
-          nhanVien: nv,
-        }),
-      );
-    } else {
-      const newNv: Partial<NhanVien> = {
-        id: randomId(),
-        username: username,
-        password: password,
-        viTri: 'NV',
-        ten: 'Nguyễn Thị Viên',
-        soDienThoai: '0343221215',
-      };
-      dispatch(
-        setNhanVien({
-          nhanVien: newNv,
-        }),
-      );
-      dispatch(
-        doFaker({
-          nhanViens: [...(nhanViens ?? []), newNv],
-        }),
-      );
-    }
-    resetNavigate([{ name: 'Main' }]);
+    loading?.toogleLoading?.(true, 'login');
+    handleLoginApi({
+      username: username,
+      password: password,
+    })
+      .then(() => {
+        resetNavigate([{ name: 'Main' }]);
+      })
+      .finally(() => {
+        loading?.toogleLoading?.(false, 'login');
+      });
   };
 
   return (

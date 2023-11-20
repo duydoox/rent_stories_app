@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -9,12 +10,14 @@ import {
 import { useTheme } from '../../hooks';
 import { AddBookScreenProps } from '../../../@types/navigation';
 import { Header } from '@/components';
-import { useAppSelector } from '@/store';
-import { useDispatch } from 'react-redux';
 import { Truyen } from 'types/faker';
-import { doFaker } from '@/store/faker';
 import { goBack } from '@/navigators/utils';
-import { randomId } from '@/utils';
+import {
+  useSuaTruyenMutation,
+  useThemTruyenMutation,
+  useXoaTruyenMutation,
+} from '@/services/modules/truyen';
+import useLoadingGlobal from '@/hooks/useLoadingGlobal';
 
 const AddBook = ({ route }: AddBookScreenProps) => {
   const { Layout, Gutters, Fonts, Common, Colors } = useTheme();
@@ -23,38 +26,86 @@ const AddBook = ({ route }: AddBookScreenProps) => {
   const titleHeader = type === 'ADD' ? 'Thêm truyện' : 'Sửa truyện';
   const textButton = type === 'ADD' ? 'Thêm' : 'Sửa';
 
-  const [truyen, setTruyen] = useState<Partial<Truyen>>(
-    oldTruyen ?? { id: randomId() },
-  );
+  const [truyen, setTruyen] = useState<Partial<Truyen>>(oldTruyen ?? {});
 
-  const { truyens } = useAppSelector(state => state.faker);
-  const dispatch = useDispatch();
+  const [handleThemTruyenApi] = useThemTruyenMutation({});
+  const [handleSuaTruyen] = useSuaTruyenMutation({});
+  const [handleXoaTruyen] = useXoaTruyenMutation({});
+
+  const loading = useLoadingGlobal();
+
+  const validation = () => {
+    if (truyen.tenTruyen?.trim() === '') {
+      return 'Vui lòng nhập tên';
+    } else if (!truyen.soLuong) {
+      return 'Vui lòng nhập số lượng';
+    } else if (!truyen.giaThue) {
+      return 'Vui lòng nhập giá thuê';
+    }
+    return false;
+  };
 
   const themTruyen = () => {
-    dispatch(
-      doFaker({
-        truyens: [...(truyens ?? []), truyen],
-      }),
-    );
+    const appraised = validation();
+    if (appraised) {
+      Alert.alert('Thông báo', appraised);
+      return;
+    }
+    loading?.toogleLoading?.(true, 'them truen');
+    handleThemTruyenApi({
+      giaThue: truyen.giaThue ?? 0,
+      soLuong: truyen.soLuong ?? 0,
+      tenTruyen: truyen.tenTruyen ?? '',
+      ghiChu: truyen.ghiChu,
+      namSanXuat: truyen.namSanXuat,
+      tacGia: truyen.tacGia,
+    })
+      .unwrap()
+      .then(() => {
+        goBack();
+      })
+      .finally(() => {
+        loading?.toogleLoading?.(false, 'them truen');
+      });
   };
 
   const suaTruyen = () => {
-    const truyenDaSuas = truyens?.map(v => (v.id === truyen.id ? truyen : v));
-    dispatch(
-      doFaker({
-        truyens: truyenDaSuas,
-      }),
-    );
+    const appraised = validation();
+    if (appraised) {
+      Alert.alert('Thông báo', appraised);
+      return;
+    }
+    loading?.toogleLoading?.(true, 'sua truen');
+    handleSuaTruyen({
+      maTruyen: truyen.maTruyen ?? '',
+      giaThue: truyen.giaThue ?? 0,
+      soLuong: truyen.soLuong ?? 0,
+      tenTruyen: truyen.tenTruyen ?? '',
+      ghiChu: truyen.ghiChu,
+      namSanXuat: truyen.namSanXuat,
+      tacGia: truyen.tacGia,
+    })
+      .unwrap()
+      .then(() => {
+        goBack();
+      })
+      .finally(() => {
+        loading?.toogleLoading?.(false, 'sua truen');
+      });
   };
 
   const xoaTruyen = () => {
-    const truyenSauXoa = truyens?.filter(v => v.id !== truyen.id);
-    dispatch(
-      doFaker({
-        truyens: truyenSauXoa,
-      }),
-    );
-    goBack();
+    loading?.toogleLoading?.(true, 'xoa truen');
+    handleXoaTruyen({
+      maTruyen: truyen.maTruyen ?? '',
+    })
+      .unwrap()
+      .then(() => {
+        goBack();
+      })
+      .finally(() => {
+        loading?.toogleLoading?.(false, 'xoa truen');
+      });
   };
 
   const submit = () => {
@@ -63,7 +114,6 @@ const AddBook = ({ route }: AddBookScreenProps) => {
     } else {
       suaTruyen();
     }
-    goBack();
   };
 
   return (
