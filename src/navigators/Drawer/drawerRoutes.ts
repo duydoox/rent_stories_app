@@ -21,7 +21,7 @@ const useDrawerRoute = (): PropsDrawerRoute[] => {
     },
     {
       route: 'Book',
-      lable: 'Quản lý sách',
+      lable: 'Quản lý truyện',
       icon: Images.icons.story,
       component: BookManager,
     },

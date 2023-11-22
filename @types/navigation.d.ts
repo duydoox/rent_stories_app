@@ -1,6 +1,6 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { KhachHang, PhieuThue, Truyen } from './faker';
+import { HoaDon, KhachHang, Truyen, TruyenDuocThue } from './faker';
 
 export type MainParamsList = {
   Home: undefined;
@@ -14,16 +14,19 @@ export type ApplicationStackParamList = {
   Startup: undefined;
   AddBook: { type: 'ADD' | 'EDIT'; truyen?: Partial<Truyen> };
   BookSelect: {
-    chooseBook: (truyen: Partial<Truyen>) => void;
+    chooseBook: (truyen: Partial<TruyenDuocThue>) => void;
+    ngayThue: string;
   };
   AddCustomer: {
-    chooseCustomer: (truyen: Partial<KhachHang>) => void;
+    chooseCustomer: (truyen: KhachHang) => void;
   };
   ReturnBookDetail: {
-    phieuThue: Partial<PhieuThue>;
+    khachHang: KhachHang;
   };
   Bill: {
-    phieuThue: Partial<PhieuThue>;
+    hoaDon: HoaDon;
+    ngayTra: string;
+    khachHang: khachHang;
   };
   Login: undefined;
   Main: NavigatorScreenParams<MainParamsList>;

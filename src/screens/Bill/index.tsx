@@ -11,11 +11,48 @@ import { useTheme } from '../../hooks';
 import { Header } from '@/components';
 import { format } from 'date-fns';
 import { BillScreenProps } from 'types/navigation';
-import { numberWithCommas } from '@/utils';
+import { dateFormatTwo, numberWithCommas } from '@/utils';
+import { useLuuHoaDonMutation } from '@/services/modules/hoaDon';
+import useLoadingGlobal from '@/hooks/useLoadingGlobal';
+import { resetNavigate } from '@/navigators/utils';
+import Toast from 'react-native-toast-message';
 
 const Bill = ({ route }: BillScreenProps) => {
   const { Common, Fonts, Gutters, Layout, Images } = useTheme();
-  const { phieuThue } = route.params;
+  const { hoaDon, ngayTra, khachHang } = route.params;
+
+  const tong = hoaDon.truyenDuocTras.reduce(
+    (sum, item) => sum + item.tienDaTra,
+    0,
+  );
+
+  const [handleLuuHoaDon] = useLuuHoaDonMutation({});
+
+  const loading = useLoadingGlobal();
+
+  const luuHoaDon = () => {
+    loading?.toogleLoading?.(true, 'luu hoa don');
+    handleLuuHoaDon({
+      dsTruyenCanTra: hoaDon.truyenDuocTras.map(v => ({
+        maTruyenDuocThue: v.truyenDuocThue.maTruyenDuocThue,
+        ngayTra: ngayTra,
+      })),
+    })
+      .unwrap()
+      .then(() => {
+        resetNavigate([{ name: 'Main' }]);
+        Toast.show({
+          type: 'success',
+          text1: 'Thông báo',
+          text2: 'Đã thanh toán thành công',
+        });
+      })
+      .finally(() => {
+        loading?.toogleLoading?.(false, 'luu hoa don');
+      });
+  };
+
+  console.log(ngayTra, 'kkkkkkk');
 
   return (
     <View style={[Layout.fill]}>
@@ -24,15 +61,7 @@ const Bill = ({ route }: BillScreenProps) => {
         <View style={[Gutters.smallHPadding, Gutters.smallTMargin]}>
           <Text style={[Fonts.titleSmall]}>Hóa đơn</Text>
           <Text style={[Fonts.textTiny]}>
-            Ngày thuê
-            {'           : ' +
-              format(
-                new Date(phieuThue?.truyenDuocThue?.[0]?.ngayThue),
-                'HH:mm dd/MM/yy',
-              )}
-          </Text>
-          <Text style={[Fonts.textTiny]}>
-            Ngày thanh toán: {format(new Date(), 'HH:mm dd/MM/yy')}
+            Ngày thanh toán: {format(new Date(ngayTra), 'HH:mm dd/MM/yyyy')}
           </Text>
 
           <Text
@@ -43,10 +72,20 @@ const Bill = ({ route }: BillScreenProps) => {
               Fonts.textBlue,
             ]}
           >
-            Hóa đơn cho: {phieuThue.khachHang?.tenKhachHang}
+            Hóa đơn cho: {khachHang?.tenKhachHang}
           </Text>
 
-          <View style={[Gutters.smallTMargin]}>
+          <Text
+            style={[
+              Fonts.textTiny,
+              Fonts.textItalic,
+              Fonts.textError,
+              Gutters.smallTMargin,
+            ]}
+          >
+            *Tiền bù là tiền cộng thêm khi trả truyện quá hạn
+          </Text>
+          <View>
             <View
               style={[
                 Layout.row,
@@ -57,29 +96,67 @@ const Bill = ({ route }: BillScreenProps) => {
               <Text style={[Fonts.textSmall, Fonts.textBold500, style.name]}>
                 Tên
               </Text>
-              <Text style={[Fonts.textSmall, Fonts.textBold500, style.count]}>
-                Số lượng
+              <Text
+                style={[
+                  Fonts.textSmall,
+                  Fonts.textBold500,
+                  style.date,
+                  style.roundLeft,
+                ]}
+              >
+                Ngày thuê
               </Text>
-              <Text style={[Fonts.textSmall, Fonts.textBold500, style.price]}>
+              <Text
+                style={[
+                  Fonts.textSmall,
+                  Fonts.textBold500,
+                  style.count,
+                  style.roundLeft,
+                ]}
+              >
                 Đơn giá
               </Text>
-              <Text style={[Fonts.textSmall, Fonts.textBold500, style.money]}>
+              <Text
+                style={[
+                  Fonts.textSmall,
+                  Fonts.textBold500,
+                  style.price,
+                  style.roundLeft,
+                ]}
+              >
+                Tiền bù*
+              </Text>
+              <Text
+                style={[
+                  Fonts.textSmall,
+                  Fonts.textBold500,
+                  style.money,
+                  style.roundLeft,
+                ]}
+              >
                 Thành tiền
               </Text>
             </View>
-            {phieuThue.truyenDuocThue?.map((item, index) => (
-              <View style={[Layout.row, Gutters.tinyVPadding]} key={index}>
-                <Text style={[Fonts.textSmall, style.name]}>
-                  {item.truyen?.tenTruyen}
+            {hoaDon.truyenDuocTras?.map((item, index) => (
+              <View
+                style={[Layout.row, Gutters.tinyVPadding, Common.roundBottom]}
+                key={index}
+              >
+                <Text style={[Fonts.textTiny, style.name]}>
+                  {item.truyenDuocThue?.truyen?.tenTruyen}
                 </Text>
-                <Text style={[Fonts.textSmall, style.count]}>
-                  {item.soLuong}
+                <Text style={[Fonts.textTiny, style.date]}>
+                  {item.truyenDuocThue?.ngayThue &&
+                    dateFormatTwo(item.truyenDuocThue?.ngayThue)}
                 </Text>
-                <Text style={[Fonts.textSmall, style.price]}>
-                  {item?.giaThue}
+                <Text style={[Fonts.textTiny, style.price]}>
+                  {numberWithCommas(item?.truyenDuocThue?.giaThue ?? 0)}
                 </Text>
-                <Text style={[Fonts.textSmall, style.money]}>
-                  {item.tongTien}
+                <Text style={[Fonts.textTiny, style.count]}>
+                  {numberWithCommas(item.tienPhat ?? 0)}
+                </Text>
+                <Text style={[Fonts.textTiny, style.money, Fonts.textBold500]}>
+                  {numberWithCommas(item.tienDaTra ?? 0)}
                 </Text>
               </View>
             ))}
@@ -87,8 +164,8 @@ const Bill = ({ route }: BillScreenProps) => {
             <View style={[Gutters.smallVMargin]}>
               <View style={[Layout.row, Layout.justifyContentBetween]}>
                 <Text style={[Fonts.textTiny]}>Tổng cộng: </Text>
-                <Text style={[Fonts.textTiny]}>
-                  {numberWithCommas(phieuThue.tongTien ?? 0)}đ
+                <Text style={[Fonts.textTiny, Fonts.textBold500]}>
+                  {numberWithCommas(tong ?? 0)}đ
                 </Text>
               </View>
               <View style={[Layout.row, Layout.justifyContentBetween]}>
@@ -103,7 +180,7 @@ const Bill = ({ route }: BillScreenProps) => {
                 <Text
                   style={[Fonts.textRegular, Fonts.textBold500, Fonts.textRed]}
                 >
-                  {numberWithCommas(phieuThue.tongTien ?? 0)}đ
+                  {numberWithCommas(tong ?? 0)}đ
                 </Text>
               </View>
             </View>
@@ -149,6 +226,7 @@ const Bill = ({ route }: BillScreenProps) => {
             Gutters.smallBMargin,
             Gutters.smallRMargin,
           ]}
+          onPress={luuHoaDon}
         >
           <Text style={[Fonts.textSmall, Fonts.textBold500]}>In hóa đơn</Text>
         </TouchableOpacity>
@@ -161,7 +239,11 @@ export default Bill;
 
 const style = StyleSheet.create({
   name: {
-    flex: 1.8,
+    flex: 1.2,
+  },
+  date: {
+    flex: 1.2,
+    textAlign: 'center',
   },
   count: {
     flex: 0.9,
@@ -172,7 +254,11 @@ const style = StyleSheet.create({
     textAlign: 'center',
   },
   money: {
-    flex: 1,
+    flex: 1.2,
     textAlign: 'right',
+  },
+  roundLeft: {
+    borderLeftWidth: 1,
+    borderColor: '#777',
   },
 });

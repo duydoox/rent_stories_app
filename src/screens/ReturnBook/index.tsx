@@ -1,92 +1,104 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../hooks';
-import { Header, Search } from '../../components';
+import { CustomModal, Header, Search } from '../../components';
 import { ApplicationScreenProps } from '../../../@types/navigation';
-import { useAppSelector } from '@/store';
-import { dateFormat, numberWithCommas } from '@/utils';
+import { KhachHang } from 'types/faker';
+import { useGetTatCaKhachHangQuery } from '@/services/modules/khachHang';
+import KhachHangInput from '../RentBook/components/KhachHangInput';
 
 const ReturnBook = ({ navigation }: ApplicationScreenProps) => {
-  const { Layout, Fonts, Common, Gutters } = useTheme();
+  const { Layout, Gutters, Fonts, Common } = useTheme();
+  const [showModal, setShowModal] = useState(false);
 
-  const { phieuThues } = useAppSelector(state => state.faker);
+  const [keyword, setKeyword] = useState('');
+
+  const { data: dsKhachHang } = useGetTatCaKhachHangQuery(
+    {
+      keyword,
+    },
+    { refetchOnMountOrArgChange: 5 },
+  );
+
+  const chonKhachHang = (kh: KhachHang) => {
+    navigation.navigate('ReturnBookDetail', { khachHang: kh });
+  };
 
   return (
     <View style={[Layout.fill]}>
-      <Header title="Danh sách thuê" isMenu />
-      <View
-        style={[
-          Gutters.smallHPadding,
-          Gutters.smallVMargin,
-          Common.backgroundCommon,
-        ]}
-      >
-        <Search placeholder="Tìm kiếm phiếu thuê" />
-      </View>
+      <Header title={'Thêm khách hàng'} />
+      <Search
+        placeholder="Tìm kiếm khách hàng"
+        showMenu={false}
+        onSearch={e => {
+          setKeyword(e ?? '');
+        }}
+      />
       <ScrollView>
+        <View style={[Gutters.smallHPadding, Gutters.tinyVMargin]}>
+          {dsKhachHang?.data?.map((kh, i) => (
+            <TouchableOpacity
+              key={i}
+              style={[
+                Common.shadow,
+                Common.radiusTiny,
+                Common.backgroundWhite,
+                Gutters.tinyVPadding,
+                Gutters.smallHPadding,
+                Gutters.tinyVMargin,
+              ]}
+              onPress={() => chonKhachHang(kh)}
+            >
+              <Text style={[Fonts.textSmall, Fonts.textBold500]}>
+                Mã {'      : '}
+                {kh.maKhachHang}
+              </Text>
+              <Text style={[Fonts.textSmall]}>
+                Tên {'     : '}
+                {kh.tenKhachHang}
+              </Text>
+              <Text style={[Fonts.textSmall]}>Liên hệ: {kh.soDienThoai}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+      <View style={[Layout.selfEnd, Layout.row]}>
+        <TouchableOpacity
+          style={[
+            Layout.selfEnd,
+            Common.backgroundPrimary,
+            Gutters.smallVPadding,
+            Gutters.regularHPadding,
+            Common.radiusTiny,
+            Gutters.smallBMargin,
+            Gutters.smallRMargin,
+          ]}
+          onPress={() => setShowModal(true)}
+        >
+          <Text style={[Fonts.textSmall, Fonts.textBold500]}>Quét</Text>
+        </TouchableOpacity>
+      </View>
+
+      <CustomModal
+        visivle={!!showModal}
+        onBackButtonPress={() => setShowModal(false)}
+      >
         <View
           style={[
-            Layout.row,
-            Gutters.tinyHMargin,
-            Common.backgroundPrimary,
-            Gutters.tinyVPadding,
+            Common.backgroundWhite,
+            Layout.fullWidth,
+            Gutters.largeHMargin,
+            Gutters.smallHPadding,
+            Gutters.smallVPadding,
+            Common.radiusSmall,
           ]}
         >
-          <Text style={[Fonts.textSmall, Fonts.textBold500, { flex: 1 }]}>
-            Mã phiếu
-          </Text>
-          <Text
-            style={[
-              Fonts.textSmall,
-              Fonts.textBold500,
-              Fonts.textCenter,
-              { flex: 1 },
-            ]}
-          >
-            Khách thuê
-          </Text>
-          <Text
-            style={[
-              Fonts.textSmall,
-              Fonts.textBold500,
-              Fonts.textCenter,
-              { flex: 1 },
-            ]}
-          >
-            Ngày trả
-          </Text>
-          <Text
-            style={[
-              Fonts.textSmall,
-              Fonts.textBold500,
-              Fonts.textRight,
-              { flex: 1 },
-            ]}
-          >
-            Tổng tiền
-          </Text>
+          <KhachHangInput
+            cancel={() => setShowModal(false)}
+            chooseCustomer={chonKhachHang}
+          />
         </View>
-        {phieuThues?.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[Layout.row, Gutters.tinyHMargin, Gutters.tinyVMargin]}
-            onPress={() =>
-              navigation.navigate('ReturnBookDetail', { phieuThue: item })
-            }
-          >
-            <Text style={[Fonts.textSmall, { flex: 1 }]}>{item.id}</Text>
-            <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 1 }]}>
-              {item.khachHang?.tenKhachHang}
-            </Text>
-            <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 1 }]}>
-              {dateFormat(new Date(item.truyenDuocThue?.[0]?.ngayTra))}
-            </Text>
-            <Text style={[Fonts.textSmall, Fonts.textRight, { flex: 1 }]}>
-              {numberWithCommas(item.tongTien ?? 0)}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      </CustomModal>
     </View>
   );
 };

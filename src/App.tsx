@@ -12,6 +12,8 @@ import {
 } from './hooks';
 import { MenuProvider } from 'react-native-popup-menu';
 import { LogBox } from 'react-native';
+import Toast from 'react-native-toast-message';
+import { PopupProvider } from './hooks/usePopup';
 
 LogBox.ignoreAllLogs();
 
@@ -26,14 +28,17 @@ const App = () => (
      */}
     <PersistGate loading={null} persistor={persistor}>
       <LoadingGlobalProvider>
-        <MenuProvider>
-          <DatePickerProvider>
-            <ImageViewerProvider>
-              <ApplicationNavigator />
-            </ImageViewerProvider>
-          </DatePickerProvider>
-        </MenuProvider>
+        <PopupProvider>
+          <MenuProvider>
+            <DatePickerProvider>
+              <ImageViewerProvider>
+                <ApplicationNavigator />
+              </ImageViewerProvider>
+            </DatePickerProvider>
+          </MenuProvider>
+        </PopupProvider>
       </LoadingGlobalProvider>
+      <Toast />
     </PersistGate>
   </Provider>
 );

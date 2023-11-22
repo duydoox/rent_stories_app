@@ -11,6 +11,7 @@ export default function <C>({
     ...Gutters.smallHPadding,
     backgroundColor: Colors.inputBackground,
     borderRadius: MetricsSizes.tiny,
+    color: Colors.textGray400,
   };
 
   return StyleSheet.create({

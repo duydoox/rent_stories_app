@@ -13,7 +13,7 @@ import { Dimensions } from 'react-native';
  */
 export const Colors = {
   transparent: 'rgba(0,0,0,0)',
-  inputBackground: '#FFFFFF',
+  inputBackground: '#EFEFEF',
   white: '#ffffff',
   background: '#ffffff',
   //Typography
@@ -29,7 +29,7 @@ export const Colors = {
   success: '#28a745',
   error: '#dc3545',
   //ComponentColors
-  circleButtonBackground: '#E1E1EF',
+  circleButtonBackground: '#E1E1E1',
   circleButtonColor: '#44427D',
 };
 

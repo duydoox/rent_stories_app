@@ -1,6 +1,6 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useState } from 'react';
 import {
-  Alert,
   Image,
   ScrollView,
   Text,
@@ -9,83 +9,78 @@ import {
   View,
 } from 'react-native';
 import { useTheme } from '../../hooks';
-import { Header } from '../../components';
+import { CustomModal, Header } from '../../components';
 import { ApplicationScreenProps } from '../../../@types/navigation';
-import { KhachHang, PhieuThue, TruyenDuocThue } from 'types/faker';
-import { dateFormat, numberWithCommas, randomId } from '@/utils';
-import useDatePicker from '@/hooks/useDatePicker';
-import { useAppSelector } from '@/store';
-import { useDispatch } from 'react-redux';
-import { doFaker } from '@/store/faker';
+import { KhachHang, TruyenDuocThue } from 'types/faker';
+import { dateFormat, dateFormatTwo, numberWithCommas } from '@/utils';
+import MaTruyenInput from './components/MaTruyenInput';
+import KhachHangInput from './components/KhachHangInput';
+import { useThemPhieuThueMutation } from '@/services/modules/phieuThue';
+import useLoadingGlobal from '@/hooks/useLoadingGlobal';
+import Toast from 'react-native-toast-message';
+import { resetNavigate } from '@/navigators/utils';
 
 const RentBook = ({ navigation }: ApplicationScreenProps) => {
   const { Layout, Common, Fonts, Gutters, Images, Colors } = useTheme();
 
-  const [khachHang, setKhachHang] = useState<Partial<KhachHang>>();
-  const [truyenDuocThue, setTruyenDuocThue] = useState<
+  const [showModal, setShowModal] = useState<'KH' | 'TRUYEN'>();
+  const [khachHang, setKhachHang] = useState<KhachHang>();
+  const [truyenDuocThues, setTruyenDuocThues] = useState<
     Partial<TruyenDuocThue>[]
   >([]);
-
   const [ngayThue] = useState(new Date());
-  const [ngayTra, setNgayTra] = useState(() => {
-    const date = new Date();
-    date.setDate(date.getDate() + 1);
-    return date;
-  });
   const [ghiChu, setGhiChu] = useState('');
 
-  const { nhanVien } = useAppSelector(state => state.auth);
-  const { phieuThues, truyenDuocThues } = useAppSelector(state => state.faker);
-  const dispatch = useDispatch();
-  const datePicker = useDatePicker();
+  const [handleTaoPhieuThue] = useThemPhieuThueMutation({});
 
-  const tong = truyenDuocThue?.reduce((pre, item) => {
-    return (
-      pre +
-      (item?.giaThue ?? 0) *
-        ((+new Date(item?.ngayTra) - +new Date(item?.ngayThue)) / 24 / 3600000)
-    );
+  const loading = useLoadingGlobal();
+
+  const tong = truyenDuocThues?.reduce((pre, item) => {
+    return pre + (item?.tongTien ?? 0);
   }, 0);
 
-  const chonTruyen = (truyen: Partial<TruyenDuocThue>) => {
-    const truyenThue: Partial<TruyenDuocThue> = {
-      id: randomId(),
-      giaThue: truyen.giaThue,
-      ngayThue: ngayThue.toISOString(),
-      ngayTra: ngayTra.toISOString(),
-      soLuong: 1,
-      tongTien: truyen?.giaThue,
-      truyen: truyen,
-    };
-    setTruyenDuocThue(pre => [...pre, truyenThue]);
+  const chonTruyen = (truyenThue: Partial<TruyenDuocThue>) => {
+    setTruyenDuocThues(pre => [...pre, truyenThue]);
   };
 
-  const taoPhieuMuon = () => {
-    const phieuThue: Partial<PhieuThue> = {
-      id: randomId(),
-      ghiChu: ghiChu,
-      tongTien: +tong.toFixed(),
-      khachHang: khachHang,
-      nhanVien: nhanVien,
-      truyenDuocThue: truyenDuocThue,
-    };
-    dispatch(
-      doFaker({
-        phieuThues: [...(phieuThues ?? []), phieuThue],
-      }),
-    );
-    dispatch(
-      doFaker({
-        truyenDuocThues: [
-          ...(truyenDuocThues ?? []),
-          ...truyenDuocThue.map(v => ({
-            ...v,
-            phieuThue: phieuThue,
-          })),
-        ],
-      }),
-    );
-    Alert.alert('Tạo phiếu mượn thành công');
+  const submit = () => {
+    if (!khachHang?.maKhachHang) {
+      Toast.show({
+        type: 'error',
+        text1: 'Thông báo',
+        text2: 'Vui lòng chọn khách hàng!',
+      });
+      return;
+    } else if (truyenDuocThues?.length === 0) {
+      Toast.show({
+        type: 'error',
+        text1: 'Thông báo',
+        text2: 'Vui lòng chọn ít nhất 1 truyện thuê!',
+      });
+      return;
+    }
+    loading?.toogleLoading?.(true, 'tao phieu');
+    handleTaoPhieuThue({
+      maKhachHang: khachHang.maKhachHang,
+      ghiChu,
+      dsTruyenDuocThue: truyenDuocThues.map(pre => ({
+        maTruyen: pre.truyen?.maTruyen ?? '',
+        ngayPhaiTra: pre.ngayPhaiTra ?? '',
+        ngayThue: ngayThue.toISOString(),
+      })),
+    })
+      .unwrap()
+      .then(() => {
+        resetNavigate([{ name: 'Main' }]);
+        Toast.show({
+          type: 'success',
+          text1: 'Thông báo',
+          text2: 'Đã tạo phiếu thuê thành công!',
+        });
+      })
+      .finally(() => {
+        loading?.toogleLoading?.(false, 'tao phieu');
+      });
   };
 
   return (
@@ -107,15 +102,20 @@ const RentBook = ({ navigation }: ApplicationScreenProps) => {
           <View style={[Gutters.smallHPadding, Gutters.tinyVMargin]}>
             {khachHang ? (
               <View style={[Layout.rowHCenter, Layout.justifyContentBetween]}>
-                <View style={[Layout.rowHCenter]}>
+                <View style={[Layout.row]}>
                   <Image
                     source={Images.avatar.male_5}
                     style={[Common.iconSize, Gutters.tinyRMargin]}
                     resizeMode="contain"
                   />
-                  <Text style={[Fonts.textSmall]}>
-                    {khachHang.tenKhachHang}
-                  </Text>
+                  <View>
+                    <Text style={[Fonts.textSmall]}>
+                      {khachHang.tenKhachHang}
+                    </Text>
+                    <Text style={[Fonts.textSmall]}>
+                      {khachHang.soDienThoai}
+                    </Text>
+                  </View>
                 </View>
                 <TouchableOpacity onPress={() => setKhachHang(undefined)}>
                   <Image
@@ -148,7 +148,7 @@ const RentBook = ({ navigation }: ApplicationScreenProps) => {
                       resizeMode="contain"
                     />
                   </TouchableOpacity>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={() => setShowModal('KH')}>
                     <Image
                       source={Images.icons.barcode_scanner}
                       style={[Common.regularSize, { tintColor: Colors.blue }]}
@@ -178,7 +178,10 @@ const RentBook = ({ navigation }: ApplicationScreenProps) => {
             <View style={[Layout.rowHCenter]}>
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('BookSelect', { chooseBook: chonTruyen })
+                  navigation.navigate('BookSelect', {
+                    chooseBook: chonTruyen,
+                    ngayThue: ngayThue.toISOString(),
+                  })
                 }
               >
                 <Image
@@ -191,7 +194,7 @@ const RentBook = ({ navigation }: ApplicationScreenProps) => {
                   resizeMode="contain"
                 />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowModal('TRUYEN')}>
                 <Image
                   source={Images.icons.barcode_scanner}
                   style={[Common.regularSize, { tintColor: Colors.blue }]}
@@ -200,7 +203,7 @@ const RentBook = ({ navigation }: ApplicationScreenProps) => {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={[Gutters.tinyHPadding, Gutters.tinyVMargin]}>
+          <View style={[Gutters.tinyVMargin]}>
             <View
               style={[
                 Layout.row,
@@ -226,10 +229,10 @@ const RentBook = ({ navigation }: ApplicationScreenProps) => {
                   Fonts.textSmall,
                   Fonts.textBold,
                   Fonts.textCenter,
-                  { flex: 1 },
+                  { flex: 1.2 },
                 ]}
               >
-                Số lượng
+                Ngày trả
               </Text>
               <Text
                 style={[
@@ -242,26 +245,28 @@ const RentBook = ({ navigation }: ApplicationScreenProps) => {
                 Tổng
               </Text>
             </View>
-            {truyenDuocThue?.map((truyen, index) => (
+            {truyenDuocThues?.map((truyenDuocThue, index) => (
               <View
                 key={index}
                 style={[
-                  Layout.row,
+                  Layout.rowHCenter,
                   Layout.justifyContentBetween,
-                  Gutters.tinyVMargin,
+                  Gutters.tinyVPadding,
+                  Common.roundBottom,
                 ]}
               >
                 <Text style={[Fonts.textSmall, { flex: 2 }]}>
-                  {truyen?.truyen?.tenTruyen}
+                  {truyenDuocThue?.truyen?.tenTruyen}
                 </Text>
                 <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 1 }]}>
-                  {numberWithCommas(truyen.giaThue)}
+                  {numberWithCommas(truyenDuocThue.giaThue ?? 0)}
                 </Text>
-                <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 1 }]}>
-                  {truyen?.soLuong}
+                <Text style={[Fonts.textTiny, Fonts.textCenter, { flex: 1.2 }]}>
+                  {truyenDuocThue?.ngayPhaiTra &&
+                    dateFormatTwo(truyenDuocThue?.ngayPhaiTra)}
                 </Text>
                 <Text style={[Fonts.textSmall, Fonts.textRight, { flex: 1 }]}>
-                  {numberWithCommas(truyen.giaThue)}đ
+                  {numberWithCommas(truyenDuocThue.tongTien ?? 0)}đ
                 </Text>
               </View>
             ))}
@@ -275,37 +280,13 @@ const RentBook = ({ navigation }: ApplicationScreenProps) => {
           >
             <Text style={[Fonts.textSmall, Fonts.textBold500]}>Tổng</Text>
             <Text style={[Fonts.textSmall, Fonts.textBold500, Fonts.textRed]}>
-              {numberWithCommas(tong.toFixed())}đ
+              {numberWithCommas(+tong.toFixed())}đ
             </Text>
           </View>
           <View style={[Gutters.smallTMargin]}>
             <Text style={[Fonts.textTiny, Fonts.textItalic]}>
               Ngày thuê: {dateFormat(ngayThue)}
             </Text>
-            <TouchableOpacity
-              style={[Layout.rowHCenter]}
-              onPress={() =>
-                datePicker?.toggle?.(true, 'datetime', d => {
-                  setNgayTra(d);
-                  setTruyenDuocThue(pre =>
-                    pre.map(v => ({ ...v, ngayTra: d?.toISOString() })),
-                  );
-                })
-              }
-            >
-              <Text style={[Fonts.textTiny, Fonts.textItalic]}>
-                Ngày trả: {'   ' + dateFormat(ngayTra)}
-              </Text>
-              <Image
-                source={Images.icons.pencil}
-                style={[
-                  Common.regularSize,
-                  Gutters.tinyLMargin,
-                  { tintColor: Colors.primary },
-                ]}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
           </View>
           <View style={[Layout.rowHCenter, Layout.justifyContentBetween]}>
             <Text style={[Fonts.textSmall, Fonts.textItalic]}>Ghi chú: </Text>
@@ -319,7 +300,7 @@ const RentBook = ({ navigation }: ApplicationScreenProps) => {
         </View>
       </ScrollView>
       <View style={[Gutters.smallBMargin, Layout.rowReverse]}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[
             Layout.selfCenter,
             Common.backgroundPrimary,
@@ -333,7 +314,7 @@ const RentBook = ({ navigation }: ApplicationScreenProps) => {
           <Text style={[Fonts.textSmall, Fonts.textBold500]}>
             In phiếu mượn
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           style={[
             Layout.selfCenter,
@@ -344,11 +325,40 @@ const RentBook = ({ navigation }: ApplicationScreenProps) => {
             Gutters.smallBMargin,
             Gutters.smallRMargin,
           ]}
-          onPress={taoPhieuMuon}
+          onPress={submit}
         >
           <Text style={[Fonts.textSmall, Fonts.textBold500]}>Tạo phiếu</Text>
         </TouchableOpacity>
       </View>
+
+      <CustomModal
+        visivle={!!showModal}
+        onBackButtonPress={() => setShowModal(undefined)}
+      >
+        <View
+          style={[
+            Common.backgroundWhite,
+            Layout.fullWidth,
+            Gutters.largeHMargin,
+            Gutters.smallHPadding,
+            Gutters.smallVPadding,
+            Common.radiusSmall,
+          ]}
+        >
+          {showModal === 'TRUYEN' ? (
+            <MaTruyenInput
+              chonTruyen={chonTruyen}
+              ngayThue={ngayThue.toISOString()}
+              cancel={() => setShowModal(undefined)}
+            />
+          ) : (
+            <KhachHangInput
+              cancel={() => setShowModal(undefined)}
+              chooseCustomer={setKhachHang}
+            />
+          )}
+        </View>
+      </CustomModal>
     </View>
   );
 };

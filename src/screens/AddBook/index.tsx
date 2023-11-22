@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -18,6 +17,8 @@ import {
   useXoaTruyenMutation,
 } from '@/services/modules/truyen';
 import useLoadingGlobal from '@/hooks/useLoadingGlobal';
+import Toast from 'react-native-toast-message';
+import useAlert from '@/hooks/useAlert';
 
 const AddBook = ({ route }: AddBookScreenProps) => {
   const { Layout, Gutters, Fonts, Common, Colors } = useTheme();
@@ -33,6 +34,7 @@ const AddBook = ({ route }: AddBookScreenProps) => {
   const [handleXoaTruyen] = useXoaTruyenMutation({});
 
   const loading = useLoadingGlobal();
+  const alert = useAlert();
 
   const validation = () => {
     if (truyen.tenTruyen?.trim() === '') {
@@ -48,7 +50,11 @@ const AddBook = ({ route }: AddBookScreenProps) => {
   const themTruyen = () => {
     const appraised = validation();
     if (appraised) {
-      Alert.alert('Thông báo', appraised);
+      Toast.show({
+        type: 'error',
+        text1: 'Thông báo',
+        text2: appraised,
+      });
       return;
     }
     loading?.toogleLoading?.(true, 'them truen');
@@ -63,6 +69,11 @@ const AddBook = ({ route }: AddBookScreenProps) => {
       .unwrap()
       .then(() => {
         goBack();
+        Toast.show({
+          type: 'success',
+          text1: 'Thông báo',
+          text2: 'Thêm truyện thành công!',
+        });
       })
       .finally(() => {
         loading?.toogleLoading?.(false, 'them truen');
@@ -72,7 +83,11 @@ const AddBook = ({ route }: AddBookScreenProps) => {
   const suaTruyen = () => {
     const appraised = validation();
     if (appraised) {
-      Alert.alert('Thông báo', appraised);
+      Toast.show({
+        type: 'error',
+        text1: 'Thông báo',
+        text2: appraised,
+      });
       return;
     }
     loading?.toogleLoading?.(true, 'sua truen');
@@ -88,6 +103,11 @@ const AddBook = ({ route }: AddBookScreenProps) => {
       .unwrap()
       .then(() => {
         goBack();
+        Toast.show({
+          type: 'success',
+          text1: 'Thông báo',
+          text2: 'Sửa truyện thành công!',
+        });
       })
       .finally(() => {
         loading?.toogleLoading?.(false, 'sua truen');
@@ -102,10 +122,30 @@ const AddBook = ({ route }: AddBookScreenProps) => {
       .unwrap()
       .then(() => {
         goBack();
+        Toast.show({
+          type: 'success',
+          text1: 'Thông báo',
+          text2: 'Đã xóa truyện!',
+        });
       })
       .finally(() => {
         loading?.toogleLoading?.(false, 'xoa truen');
       });
+  };
+
+  const xacNhanXoa = () => {
+    alert('Thông báo', 'Bạn có chắc muốn xóa không?', [
+      {
+        text: 'Không',
+        type: 'cancel',
+      },
+      {
+        text: 'Có',
+        onPress() {
+          xoaTruyen();
+        },
+      },
+    ]);
   };
 
   const submit = () => {
@@ -216,7 +256,7 @@ const AddBook = ({ route }: AddBookScreenProps) => {
               Gutters.smallBMargin,
               Gutters.smallHMargin,
             ]}
-            onPress={xoaTruyen}
+            onPress={xacNhanXoa}
           >
             <Text style={[Fonts.textSmall, Fonts.textBold500]}>Xóa</Text>
           </TouchableOpacity>

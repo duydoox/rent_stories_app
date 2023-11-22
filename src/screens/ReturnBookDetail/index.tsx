@@ -1,16 +1,84 @@
-import React from 'react';
+/* eslint-disable react-native/no-inline-styles */
+import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../hooks';
 import { Header } from '../../components';
 import { ReturnBookDetailScreenProps } from '../../../@types/navigation';
-import { dateFormat, numberWithCommas } from '@/utils';
+import { dateFormatTwo, numberWithCommas } from '@/utils';
+import { useGetDanhSachTruyenThueCuaKhachQuery } from '@/services/modules/truyenDuocThue';
+import { useTaoHoaDonMutation } from '@/services/modules/hoaDon';
+import useLoadingGlobal from '@/hooks/useLoadingGlobal';
+import { TruyenDuocThue } from 'types/faker';
+import Toast from 'react-native-toast-message';
 
 const ReturnBookDetail = ({
   navigation,
   route,
 }: ReturnBookDetailScreenProps) => {
-  const { Layout, Fonts, Common, Gutters } = useTheme();
-  const { phieuThue } = route.params;
+  const { Layout, Fonts, Common, Gutters, Colors } = useTheme();
+  const { khachHang } = route.params;
+  const [danhSachCanTra, setDanhSachCanTra] = useState<TruyenDuocThue[]>([]);
+
+  const tong = danhSachCanTra.reduce((sum, item) => sum + item.tongTien, 0);
+
+  const { data: danhSachThue } = useGetDanhSachTruyenThueCuaKhachQuery(
+    {
+      maKhachHang: khachHang.maKhachHang,
+      isUnpaid: true,
+    },
+    {
+      skip: !khachHang.maKhachHang,
+      refetchOnMountOrArgChange: true,
+    },
+  );
+
+  const [handleTaoHoaDon] = useTaoHoaDonMutation({});
+
+  const loading = useLoadingGlobal();
+
+  const chonTruyenTra = (t: TruyenDuocThue) => {
+    // const find = danhSachCanTra.find(
+    //   v => v.maTruyenDuocThue === t.maTruyenDuocThue,
+    // );
+    const find = danhSachCanTra.includes(t);
+    if (find) {
+      setDanhSachCanTra(
+        danhSachCanTra.filter(v => v.maTruyenDuocThue !== t.maTruyenDuocThue),
+      );
+    } else {
+      setDanhSachCanTra([...danhSachCanTra, t]);
+    }
+  };
+
+  const taoHoaDon = () => {
+    if (danhSachCanTra.length === 0) {
+      Toast.show({
+        type: 'error',
+        text1: 'Thông báo',
+        text2: 'Vui lòng chọn truyện cần trả',
+      });
+      return;
+    }
+    loading?.toogleLoading?.(true, 'tao hoa don');
+    const ngayTra = new Date().toISOString();
+    handleTaoHoaDon({
+      dsTruyenCanTra: danhSachCanTra.map(v => ({
+        maTruyenDuocThue: v.maTruyenDuocThue,
+        ngayTra: ngayTra,
+      })),
+    })
+      .unwrap()
+      .then(data => {
+        navigation.navigate('Bill', {
+          hoaDon: data.data,
+          ngayTra,
+          khachHang: khachHang,
+        });
+      })
+      .finally(() => {
+        loading?.toogleLoading?.(false, 'tao hoa don');
+      });
+  };
 
   return (
     <View style={[Layout.fill]}>
@@ -18,11 +86,32 @@ const ReturnBookDetail = ({
       <ScrollView>
         <View style={[Gutters.smallHPadding]}>
           <Text
-            style={[Fonts.textRegular, Fonts.textBold500, Gutters.smallTMargin]}
+            style={[
+              Fonts.textRegular,
+              Fonts.textBold500,
+              Gutters.smallTMargin,
+              Fonts.textBlue,
+            ]}
+          >
+            Khách hàng: {khachHang.tenKhachHang}
+          </Text>
+          <Text style={[Fonts.textSmall]}>
+            Số điện thoại: {khachHang.soDienThoai}
+          </Text>
+          <Text
+            style={[
+              Fonts.textRegular,
+              Fonts.textBold500,
+              Gutters.smallTMargin,
+              Gutters.tinyBMargin,
+            ]}
           >
             Danh sách thuê
           </Text>
 
+          <Text style={[Fonts.textTiny, Fonts.textItalic, Fonts.textError]}>
+            *Ngày trả là ngày trả dự kiến
+          </Text>
           <View style={[Gutters.tinyVMargin]}>
             <View
               style={[
@@ -42,17 +131,17 @@ const ReturnBookDetail = ({
                   { flex: 1 },
                 ]}
               >
-                Giá
+                Giá thuê
               </Text>
               <Text
                 style={[
                   Fonts.textSmall,
                   Fonts.textBold,
                   Fonts.textCenter,
-                  { flex: 1 },
+                  { flex: 1.3 },
                 ]}
               >
-                Số lượng
+                Ngày trả*
               </Text>
               <Text
                 style={[
@@ -65,28 +154,36 @@ const ReturnBookDetail = ({
                 Tổng
               </Text>
             </View>
-            {phieuThue?.truyenDuocThue?.map((truyen, index) => (
-              <View
+            {danhSachThue?.data?.map((truyenDuocThue, index) => (
+              <TouchableOpacity
                 key={index}
                 style={[
                   Layout.row,
                   Layout.justifyContentBetween,
-                  Gutters.tinyVMargin,
+                  Gutters.tinyVPadding,
+                  Common.roundBottom,
+                  {
+                    backgroundColor: danhSachCanTra.includes(truyenDuocThue)
+                      ? Colors.orange
+                      : undefined,
+                  },
                 ]}
+                onPress={() => chonTruyenTra(truyenDuocThue)}
               >
                 <Text style={[Fonts.textSmall, { flex: 2 }]}>
-                  {truyen?.truyen?.tenTruyen}
+                  {truyenDuocThue?.truyen?.tenTruyen}
                 </Text>
                 <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 1 }]}>
-                  {numberWithCommas(truyen.giaThue)}
+                  {numberWithCommas(truyenDuocThue.giaThue)}đ
                 </Text>
-                <Text style={[Fonts.textSmall, Fonts.textCenter, { flex: 1 }]}>
-                  {truyen?.soLuong}
+                <Text style={[Fonts.textTiny, Fonts.textCenter, { flex: 1.3 }]}>
+                  {truyenDuocThue.ngayPhaiTra &&
+                    dateFormatTwo(truyenDuocThue.ngayPhaiTra)}
                 </Text>
                 <Text style={[Fonts.textSmall, Fonts.textRight, { flex: 1 }]}>
-                  {numberWithCommas(truyen.giaThue)}đ
+                  {numberWithCommas(truyenDuocThue.tongTien)}đ
                 </Text>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
           <View
@@ -98,27 +195,7 @@ const ReturnBookDetail = ({
           >
             <Text style={[Fonts.textSmall, Fonts.textBold500]}>Tổng</Text>
             <Text style={[Fonts.textSmall, Fonts.textBold500, Fonts.textRed]}>
-              {numberWithCommas(+phieuThue.tongTien ?? 0)}đ
-            </Text>
-          </View>
-          <View style={[Gutters.smallTMargin]}>
-            <Text style={[Fonts.textTiny, Fonts.textItalic]}>
-              Ngày thuê:{' '}
-              {dateFormat(new Date(phieuThue.truyenDuocThue?.[0]?.ngayThue))}
-            </Text>
-            <Text style={[Fonts.textTiny, Fonts.textItalic]}>
-              Ngày trả:{' '}
-              {dateFormat(new Date(phieuThue.truyenDuocThue?.[0]?.ngayTra))}
-            </Text>
-            <Text style={[Fonts.textTiny, Fonts.textItalic]}>
-              Khách hàng: {phieuThue.khachHang?.tenKhachHang}
-            </Text>
-            <Text style={[Fonts.textTiny, Fonts.textItalic]}>
-              Liên hệ: {phieuThue.khachHang?.soDienThoai}
-            </Text>
-
-            <Text style={[Fonts.textTiny, Fonts.textItalic]}>
-              Ghi chú: {phieuThue.ghiChu}
+              {numberWithCommas(+tong ?? 0)}đ
             </Text>
           </View>
         </View>
@@ -135,7 +212,7 @@ const ReturnBookDetail = ({
             Gutters.smallBMargin,
             Gutters.smallRMargin,
           ]}
-          onPress={() => navigation.navigate('Bill', { phieuThue: phieuThue })}
+          onPress={taoHoaDon}
         >
           <Text style={[Fonts.textSmall, Fonts.textBold500]}>Tạo hóa đơn</Text>
         </TouchableOpacity>

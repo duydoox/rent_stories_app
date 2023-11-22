@@ -40,7 +40,7 @@ const baseQueryWithInterceptor: BaseQueryFn<
 export const api = createApi({
   baseQuery: baseQueryWithInterceptor,
   endpoints: () => ({}),
-  tagTypes: ['Truyen'],
+  tagTypes: ['Truyen', 'KhachHang', 'NhanVien'],
 });
 
 export type ResponseT<T> = {

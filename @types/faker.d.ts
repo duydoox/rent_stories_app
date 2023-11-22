@@ -36,11 +36,10 @@ export type KhachHang = {
 
 export type TruyenDuocThue = {
   maTruyenDuocThue: string;
-  soLuong: number;
   giaThue: number;
   tongTien: number;
   ngayThue: string;
-  ngayTra: string;
+  ngayPhaiTra: string;
   truyen: Partial<Truyen>;
   phieuThue: Partial<PhieuThue>;
 };
@@ -48,18 +47,25 @@ export type TruyenDuocThue = {
 export type PhieuThue = {
   maPhieuThue: string;
   ghiChu: string;
-  tongTien: number;
   nhanVien: Partial<NhanVien>;
   khachHang: Partial<KhachHang>;
   truyenDuocThue: Partial<TruyenDuocThue>[];
 };
 
+export type TruyenDuocTra = {
+  maTruyenDuocTra: string;
+  tienPhat: number;
+  tienDaTra: number;
+  ngayTra: Date;
+  lyDoPhat: string;
+  truyenDuocThue: TruyenDuocThue;
+  hoaDon: HoaDon;
+};
+
 export type HoaDon = {
   maHoaDon: string;
-  ngayTaoHoaDon: string;
-  tienPhat: number;
   tongTien: number;
   ghiChu: string;
   nhanVien: NhanVien;
-  phieuThue: Partial<PhieuThue>;
+  truyenDuocTras: TruyenDuocTra[];
 };

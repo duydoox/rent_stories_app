@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
-  Image,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -11,12 +10,13 @@ import { useTheme } from '../../hooks';
 import { ApplicationScreenProps } from '../../../@types/navigation';
 import { Header, Search } from '@/components';
 import { Truyen } from 'types/faker';
-import { numberWithCommas } from '@/utils';
 import { useTimKiemTruyenQuery } from '@/services/modules/truyen';
 import { RefreshControl } from 'react-native';
+import { useAppSelector } from '@/store';
+import BookItem from './components/BookItem';
 
 const BookManager = ({ navigation }: ApplicationScreenProps) => {
-  const { Layout, Gutters, Fonts, Common, Images, Colors } = useTheme();
+  const { Layout, Gutters, Fonts, Common, Colors } = useTheme();
   const [keyword, setKeyword] = useState('');
 
   const {
@@ -24,9 +24,16 @@ const BookManager = ({ navigation }: ApplicationScreenProps) => {
     isLoading,
     isFetching,
     refetch,
-  } = useTimKiemTruyenQuery({
-    keyword: keyword,
-  });
+  } = useTimKiemTruyenQuery(
+    {
+      keyword: keyword,
+    },
+    { refetchOnMountOrArgChange: true },
+  );
+
+  const { nhanVien } = useAppSelector(state => state.auth);
+
+  const isQuanLy = nhanVien?.viTri === 'QL';
 
   const truyenShow = truyens?.data;
 
@@ -40,13 +47,18 @@ const BookManager = ({ navigation }: ApplicationScreenProps) => {
 
   return (
     <View style={[Layout.fill]}>
-      <Header title="Quản lý truyện" isMenu />
+      <Header title={isQuanLy ? 'Quản lý truyện' : 'Danh sách truyện'} isMenu />
       <Search
         showMenu={false}
         onSearch={e => {
           setKeyword(e ?? '');
         }}
       />
+      {isFetching && (
+        <View>
+          <ActivityIndicator color={Colors.primary} />
+        </View>
+      )}
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={isFetching} onRefresh={refetch} />
@@ -55,42 +67,13 @@ const BookManager = ({ navigation }: ApplicationScreenProps) => {
         <View>
           <View>
             {truyenShow?.map((v, i) => (
-              <TouchableOpacity
+              <BookItem
+                truyen={v}
                 key={i}
-                style={[
-                  Gutters.tinyVPadding,
-                  Common.backgroundWhite,
-                  Gutters.tinyVMargin,
-                  Gutters.smallHPadding,
-                ]}
                 onPress={() => suaTruyen(v)}
-              >
-                <View style={[Layout.rowHCenter, Layout.justifyContentBetween]}>
-                  <Text
-                    style={[
-                      Fonts.textSmall,
-                      Fonts.textPrimary,
-                      Fonts.textBold500,
-                    ]}
-                  >
-                    Mã truyện: {v.maTruyen}
-                  </Text>
-                  <Image
-                    source={Images.icons.pencil}
-                    style={[Common.iconSize, { tintColor: Colors.primary }]}
-                    resizeMode="contain"
-                  />
-                </View>
-                <Text style={[Fonts.textSmall, Fonts.textBlue]}>
-                  Tên truyện: {v.tenTruyen}
-                </Text>
-                <Text style={[Fonts.textSmall, Fonts.textOrange]}>
-                  Số lượng: {v.soLuong}
-                </Text>
-                <Text style={[Fonts.textSmall]}>
-                  Giá: {numberWithCommas(v.giaThue ?? 0)}đ
-                </Text>
-              </TouchableOpacity>
+                disabled={!isQuanLy}
+                isEditIcon={isQuanLy}
+              />
             ))}
             {truyenShow?.length === 0 && (
               <Text
@@ -108,21 +91,23 @@ const BookManager = ({ navigation }: ApplicationScreenProps) => {
           </View>
         </View>
       </ScrollView>
-      <TouchableOpacity
-        style={[
-          Layout.selfCenter,
-          Common.backgroundPrimary,
-          Gutters.smallVPadding,
-          Gutters.regularHPadding,
-          Gutters.smallHMargin,
-          Common.radiusTiny,
-          Gutters.smallVMargin,
-          Layout.selfEnd,
-        ]}
-        onPress={themTruyen}
-      >
-        <Text style={[Fonts.textSmall, Fonts.textBold500]}>Thêm truyện</Text>
-      </TouchableOpacity>
+      {isQuanLy && (
+        <TouchableOpacity
+          style={[
+            Layout.selfCenter,
+            Common.backgroundPrimary,
+            Gutters.smallVPadding,
+            Gutters.regularHPadding,
+            Gutters.smallHMargin,
+            Common.radiusTiny,
+            Gutters.smallVMargin,
+            Layout.selfEnd,
+          ]}
+          onPress={themTruyen}
+        >
+          <Text style={[Fonts.textSmall, Fonts.textBold500]}>Thêm truyện</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
