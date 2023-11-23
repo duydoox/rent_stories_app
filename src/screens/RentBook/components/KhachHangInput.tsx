@@ -30,8 +30,12 @@ const KhachHangInput = ({ chooseCustomer, cancel }: Props) => {
     })
       .unwrap()
       .then(data => {
-        chooseCustomer(data.data);
-        cancel();
+        if (data.data) {
+          chooseCustomer(data.data);
+          cancel();
+        } else {
+          setErrMsg('Không tìm thấy khách hàng');
+        }
       })
       .finally(() => {
         loading?.toogleLoading?.(false, 'khach hang');
@@ -40,13 +44,13 @@ const KhachHangInput = ({ chooseCustomer, cancel }: Props) => {
 
   return (
     <View style={[]}>
-      <Text style={[Fonts.textRegular, Fonts.textBold]}>Quét truyện</Text>
+      <Text style={[Fonts.textRegular, Fonts.textBold]}>Quét khách hàng</Text>
       <Text style={[Fonts.textSmall, Fonts.textBold500, Gutters.tinyTMargin]}>
-        Mã truyện
+        Mã khách hàng
       </Text>
       <TextInput
-        style={[Common.input.common]}
-        placeholder="Nhập mã truyện"
+        style={[Common.input.common, Common.backgroundButton]}
+        placeholder="Nhập mã khách hàng"
         value={maKhachHang}
         onChangeText={t => {
           setMaKhachHang(t);

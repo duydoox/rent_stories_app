@@ -32,7 +32,7 @@ const baseQueryWithInterceptor: BaseQueryFn<
   if (result.error && result.error.status === 401) {
   }
   if (result.error) {
-    Alert.alert('Lỗi', JSON.stringify(result));
+    Alert.alert('Lỗi', JSON.stringify(result?.error?.data?.message));
   }
   return result;
 };

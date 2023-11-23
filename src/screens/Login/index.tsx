@@ -46,7 +46,7 @@ const Login = ({}: ApplicationScreenProps) => {
           Layout.justifyContentCenter,
         ]}
       >
-        <Text style={[Fonts.textSmall, Gutters.tinyBMargin]}>
+        <Text style={[Fonts.textSmall, Gutters.tinyBMargin, Fonts.textBold500]}>
           Tên đăng nhập
         </Text>
         <TextInput
@@ -56,7 +56,9 @@ const Login = ({}: ApplicationScreenProps) => {
           value={username}
           onChangeText={setUsername}
         />
-        <Text style={[Fonts.textSmall, Gutters.tinyBMargin]}>Mật khẩu</Text>
+        <Text style={[Fonts.textSmall, Gutters.tinyBMargin, Fonts.textBold500]}>
+          Mật khẩu
+        </Text>
         <TextInput
           style={[Common.input.common, Fonts.textSmall]}
           placeholder="Mật khẩu"

@@ -46,8 +46,12 @@ const MaTruyenInput = ({ chonTruyen, cancel, ngayThue }: Props) => {
       .unwrap()
       .then(data => {
         const truyenThue = data?.data;
-        chonTruyen(truyenThue);
-        cancel();
+        if (truyenThue) {
+          chonTruyen(truyenThue);
+          cancel();
+        } else {
+          setErrMsg('Không tìm thấy truyện này');
+        }
       })
       .finally(() => {
         loading?.toogleLoading?.(false, 'tinh tien');
@@ -61,7 +65,7 @@ const MaTruyenInput = ({ chonTruyen, cancel, ngayThue }: Props) => {
         Mã truyện
       </Text>
       <TextInput
-        style={[Common.input.common]}
+        style={[Common.input.common, Common.backgroundButton]}
         placeholder="Nhập mã truyện"
         value={maTruyen}
         onChangeText={t => {

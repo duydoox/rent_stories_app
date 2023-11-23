@@ -26,7 +26,7 @@ const ReturnBook = ({ navigation }: ApplicationScreenProps) => {
 
   return (
     <View style={[Layout.fill]}>
-      <Header title={'Thêm khách hàng'} />
+      <Header title={'Trả truyện'} isMenu />
       <Search
         placeholder="Tìm kiếm khách hàng"
         showMenu={false}
