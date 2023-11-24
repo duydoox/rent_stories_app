@@ -1,6 +1,7 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { HoaDon, KhachHang, Truyen, TruyenDuocThue } from './faker';
+import { ReqGetChiTietTKT } from '@/services/modules/truyenDuocTra/getChiTietThongKe';
 
 export type MainParamsList = {
   Home: undefined;
@@ -30,6 +31,7 @@ export type ApplicationStackParamList = {
   };
   Login: undefined;
   Main: NavigatorScreenParams<MainParamsList>;
+  StatisticDetail: ReqGetChiTietTKT & { tenTruyen: string };
 };
 
 export type ApplicationScreenProps =
@@ -58,4 +60,9 @@ export type ReturnBookDetailScreenProps = StackScreenProps<
 export type BillScreenProps = StackScreenProps<
   ApplicationStackParamList,
   'Bill'
+>;
+
+export type StatisticDetailScreenProps = StackScreenProps<
+  ApplicationStackParamList,
+  'StatisticDetail'
 >;

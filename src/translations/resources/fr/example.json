@@ -1,3 +1,20 @@
 {
-  "helloUser": "Salut, je m'appelle {{name}}"
+  "helloUser": "Salut, je m'appelle {{name}}",
+  "home": "Trang chủ",
+  "Books": "Quản lý truyện",
+  "rent": "Tạo phiếu mượn",
+  "pay": "Trả sách",
+  "statistic": "Thống kê",
+  "settings": "Cài đặt",
+  "darkMode": "Chế độ ban đêm",
+  "dark": "Đêm",
+  "bright": "Sáng",
+  "language": "Ngôn ngữ",
+  "vietnam": "Việt Nam",
+  "english": "English",
+  "infomation": "Thông tin cá nhân",
+  "changePassword": "Đổi mật khẩu",
+  "logOut": "Đăng xuất",
+  "manager": "Quản lý",
+  "staff": "Nhân viên"
 }

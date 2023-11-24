@@ -1,4 +1,21 @@
 {
-  "helloUser": "Hi, my name is {{name}}"
+  "helloUser": "Hi, my name is {{name}}",
+  "home": "Home",
+  "Books": "Books",
+  "rent": "Rent",
+  "pay": "Pay",
+  "statistic": "Statistic",
+  "settings": "Settings",
+  "darkMode": "Dark mode",
+  "dark": "Dark",
+  "bright": "Bright",
+  "language": "Languages",
+  "vietnam": "Việt Nam",
+  "english": "English",
+  "infomation": "Infomation",
+  "changePassword": "Change password",
+  "logOut": "Logout",
+  "manager": "Manager",
+  "staff": "Staff"
 }
 

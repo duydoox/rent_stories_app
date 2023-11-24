@@ -14,11 +14,9 @@ const Home = ({ navigation }: ApplicationScreenProps) => {
 
   const { nhanVien } = useAppSelector(state => state.auth);
 
-  const { data: truyens } = useTimKiemTruyenQuery({
+  useTimKiemTruyenQuery({
     keyword: '',
   });
-
-  console.log(truyens, 'truyens');
 
   const showRoutes = routeDrawer?.filter(
     v =>

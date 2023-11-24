@@ -1,5 +1,6 @@
 import { useTheme } from '@/hooks';
 import { BookManager, Home, RentBook, ReturnBook, Statistic } from '@/screens';
+import { useTranslation } from 'react-i18next';
 import { MainParamsList } from 'types/navigation';
 
 export type PropsDrawerRoute = {
@@ -11,35 +12,36 @@ export type PropsDrawerRoute = {
 
 const useDrawerRoute = (): PropsDrawerRoute[] => {
   const { Images } = useTheme();
+  const { t } = useTranslation(['example']);
 
   return [
     {
       route: 'Home',
-      lable: 'Trang chủ',
+      lable: t('home'),
       icon: Images.icons.home,
       component: Home,
     },
     {
       route: 'Book',
-      lable: 'Quản lý truyện',
+      lable: t('Books'),
       icon: Images.icons.story,
       component: BookManager,
     },
     {
       route: 'RentBook',
-      lable: 'Tạo phiếu mượn',
+      lable: t('rent'),
       icon: Images.icons.rent,
       component: RentBook,
     },
     {
       route: 'ReturnBook',
-      lable: 'Trả sách',
+      lable: t('pay'),
       icon: Images.icons.payment,
       component: ReturnBook,
     },
     {
       route: 'Statistic',
-      lable: 'Thống kê',
+      lable: t('statistic'),
       icon: Images.icons.statistic,
       component: Statistic,
     },

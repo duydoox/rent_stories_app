@@ -9,6 +9,7 @@ import {
   BookSelect,
   Login,
   Startup,
+  StatisticDetail,
 } from '../screens';
 import { useTheme } from '../hooks';
 import { useFlipper } from '@react-navigation/devtools';
@@ -55,6 +56,7 @@ const ApplicationNavigator = () => {
           <Stack.Screen name="BookSelect" component={BookSelect} />
           <Stack.Screen name="AddCustomer" component={AddCustomer} />
           <Stack.Screen name="ReturnBookDetail" component={ReturnBookDetail} />
+          <Stack.Screen name="StatisticDetail" component={StatisticDetail} />
           <Stack.Screen name="Main" component={MyDrawer} />
         </Stack.Navigator>
       </NavigationContainer>

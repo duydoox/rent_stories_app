@@ -20,8 +20,10 @@ import { useAppSelector } from '@/store';
 import { changelanguage } from '@/store/setting';
 import { resetNavigate } from '../utils';
 import { setToken } from '@/store/auth';
+import { useTranslation } from 'react-i18next';
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
+  const { t } = useTranslation(['example']);
   const progress = useDrawerProgress();
   const { descriptors, navigation, state } = props;
   const {
@@ -200,7 +202,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
             Common.backgroundCommon,
           ]}
         >
-          <Text style={[Fonts.textBold500, Fonts.textSmall]}>Cài đặt</Text>
+          <Text style={[Fonts.textBold500, Fonts.textSmall]}>
+            {t('settings')}
+          </Text>
           <View style={[Common.seperate]} />
           <View style={[Gutters.tinyTPadding]}>
             <View style={[Layout.rowHCenter]}>
@@ -214,13 +218,13 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                 ]}
               />
               <Text style={[Fonts.textSmall, Fonts.textNight]}>
-                Chế độ ban đêm
+                {t('darkMode')}
               </Text>
             </View>
             <View style={[Gutters.largeLMargin, Gutters.smallLPadding]}>
               <View style={[Layout.rowHCenter, Layout.justifyContentBetween]}>
                 <Text style={[Fonts.textSmall, Fonts.textBold500]}>
-                  - {isDark ? 'Tối' : 'Sáng'}
+                  - {isDark ? t('dark') : t('bright')}
                 </Text>
                 <Switch
                   value={isDark}
@@ -240,7 +244,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                   Gutters.smallRMargin,
                 ]}
               />
-              <Text style={[Fonts.textSmall, Fonts.textNight]}>Ngôn ngữ</Text>
+              <Text style={[Fonts.textSmall, Fonts.textNight]}>
+                {t('language')}
+              </Text>
             </View>
             <View style={[Gutters.largeLMargin, Gutters.smallLPadding]}>
               <View style={[Layout.rowHCenter, Gutters.tinyVMargin]}>
@@ -290,7 +296,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
               style={[Common.largeSize, Gutters.smallRMargin]}
             />
             <Text style={[Fonts.textSmall, Fonts.textBold500]}>
-              Thông tin cá nhân
+              {t('infomation')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={[Layout.rowHCenter, Gutters.tinyVPadding]}>
@@ -300,7 +306,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
               style={[Common.largeSize, Gutters.smallRMargin]}
             />
             <Text style={[Fonts.textSmall, Fonts.textBold500]}>
-              Đổi mật khẩu
+              {t('changePassword')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -312,7 +318,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
               resizeMode="contain"
               style={[Common.largeSize, Gutters.smallRMargin]}
             />
-            <Text style={[Fonts.textSmall, Fonts.textBold500]}>Đăng xuất</Text>
+            <Text style={[Fonts.textSmall, Fonts.textBold500]}>
+              {t('logOut')}
+            </Text>
           </TouchableOpacity>
         </Animated.View>
       </Animated.ScrollView>
@@ -338,7 +346,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
             {nhanVien?.tenNhanVien ?? 'Tên nhân viên'}
           </Text>
           <Text style={[Fonts.textTiny, Fonts.textPrimary]}>
-            {nhanVien?.viTri === 'QL' ? 'Quản lý' : 'Nhân viên'}
+            {nhanVien?.viTri === 'QL' ? t('manager') : t('staff')}
           </Text>
         </View>
       </TouchableOpacity>
